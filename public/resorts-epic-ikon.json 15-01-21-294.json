@@ -1,0 +1,477 @@
+[
+  {
+    "name": "Vail",
+    "id": "9030998fda4f92b141a2cd0eb7b272290bccefae",
+    "pass": "Epic"
+  },
+  {
+    "name": "Beaver Creek",
+    "id": "321a24e2db7d77177a143325a89e10de1ddeada7",
+    "pass": "Epic"
+  },
+  {
+    "name": "Whistler Blackcomb",
+    "id": "9acabdff8a4e7ac9bd74c5812a03220c3a2cf1ab",
+    "pass": "Epic"
+  },
+  {
+    "name": "Breckenridge",
+    "id": "c329b1fe669c197d615896dfd4e38d4bb039e30c",
+    "pass": "Epic"
+  },
+  {
+    "name": "Keystone",
+    "id": "e9d26c72f918e002659f0e9ba565f8d51b7793a8",
+    "pass": "Epic"
+  },
+  {
+    "name": "Crested Butte",
+    "id": "2d5e1bfae873fe363df3cf73f7fd77f3a892e563",
+    "pass": "Epic"
+  },
+  {
+    "name": "Park City",
+    "id": "be21197d101373cf2bc532a9fcce6d6e1d1bd76e",
+    "pass": "Epic"
+  },
+  {
+    "name": "Heavenly",
+    "id": "53dd0fd9ec1c2ed9709b27830f36dcb87a31f8c3",
+    "pass": "Epic"
+  },
+  {
+    "name": "Northstar",
+    "id": "3c9f145171f1936107e2fa026ca8cb624a4353f2",
+    "pass": "Epic"
+  },
+  {
+    "name": "Kirkwood",
+    "id": "207edac28d0ece59b86d3282c756fa4d2774ca0a",
+    "pass": "Epic"
+  },
+  {
+    "name": "Stevens Pass",
+    "id": "cd52cfebdda8e84997b3447573546b8d17bc8e6d",
+    "pass": "Epic"
+  },
+  {
+    "name": "Stowe",
+    "id": "f511535c529ee4710b2165d57a2370731c890ca7",
+    "pass": "Epic"
+  },
+  {
+    "name": "Okemo",
+    "id": "0f0d574cfdbd7b9a55296a94c4683b3e732a543b",
+    "pass": "Epic"
+  },
+  {
+    "name": "Mount Snow",
+    "id": "d3f269fa632577f05e24199329b15e97f70c23b2",
+    "pass": "Epic"
+  },
+  {
+    "name": "Mount Sunapee",
+    "id": "8c3d093201d7e50d5f9bde121096fbb552a056e9",
+    "pass": "Epic"
+  },
+  {
+    "name": "Wildcat Mountain",
+    "id": "24b8924be38edd6e594f4c8f8f62531ed9ff6bf0",
+    "pass": "Epic"
+  },
+  {
+    "name": "Attitash Mountain",
+    "id": "aafcdad49f2f9b6f9dc4ae44b1479896dde5ec8b",
+    "pass": "Epic"
+  },
+  {
+    "name": "Crotched Mountain",
+    "id": "6fdde2a846d545fcbd14bb1b1d22342bf5ff2989",
+    "pass": "Epic"
+  },
+  {
+    "name": "Hunter Mountain",
+    "id": "00a3d696640741b896c390bba01c30aecebdc52d",
+    "pass": "Epic"
+  },
+  {
+    "name": "Liberty Mountain Resort",
+    "id": "6fab99ca0f48e48b41acc39f35e85a4cc88c672a",
+    "pass": "Epic"
+  },
+  {
+    "name": "Roundtop Mountain Resort",
+    "id": "171f9aae15d2e98390351ca2fb8ca442a1a0fabf",
+    "pass": "Epic"
+  },
+  {
+    "name": "Whitetail Resort",
+    "id": "97655053adc3665312bf8601a0a73ac25fc9bb38",
+    "pass": "Epic"
+  },
+  {
+    "name": "Jack Frost",
+    "id": "70ab371ade99fffb394a6c3af93adec00e0a8f9e",
+    "pass": "Epic"
+  },
+  {
+    "name": "Big Boulder",
+    "id": "6bd6f902e11a710c610118df458ee0636ddef09a",
+    "pass": "Epic"
+  },
+  {
+    "name": "Laurel Mountain",
+    "id": "df8e5111a26b3f12f1d25b9f0a2cf6e8395fe31d",
+    "pass": "Epic"
+  },
+  {
+    "name": "Seven Springs",
+    "id": "650f96a36dc89d4a1a3d3dbf420184eedbe0747e",
+    "pass": "Epic"
+  },
+  {
+    "name": "Hidden Valley",
+    "id": "f61116b164af9a7f69593d7e8c64855391df43f5",
+    "pass": "Epic"
+  },
+  {
+    "name": "Alpine Valley",
+    "id": "c2f5c05e6fc6f60f7399be01a85d22bce3bbe183",
+    "pass": "Epic"
+  },
+  {
+    "name": "Boston Mills & Brandywine",
+    "id": "8b3147c2341b14e906d6f78b16b7b6d8c476974e ",
+    "pass": "Epic"
+  },
+  {
+    "name": "Mad River Mountain",
+    "id": "7271d8904f4c2f10adcb1d9200e98b13e1a65897",
+    "pass": "Epic"
+  },
+  {
+    "name": "Snow Creek",
+    "id": "6cae61bddd21493e3c1dc40280ef61c74e967305",
+    "pass": "Epic"
+  },
+  {
+    "name": "Paoli Peaks",
+    "id": "0554f7a9d98a130c7629ac5f5be27f2ccf4ee88f",
+    "pass": "Epic"
+  },
+  {
+    "name": "Wilmot",
+    "id": "20792d490b04a009a6918d8d23eee21e1b8a19ab",
+    "pass": "Epic"
+  },
+  {
+    "name": "Afton Alps",
+    "id": "083130d6713ac93c9eed6c074b958271f2995e4d",
+    "pass": "Epic"
+  },
+  {
+    "name": "Mt Brighton",
+    "id": "1d39d98c17338120b4894722b13a744046a5b42b",
+    "pass": "Epic"
+  },
+  {
+    "name": "Telluride",
+    "id": "31448f6acd1c42f66ba4b466f00261c81d791b52",
+    "pass": "Epic"
+  },
+  {
+    "name": "Fernie Alpine Resort",
+    "id": "79b01fda1734ca7ed73eae1f0e1fa25642e05ba1",
+    "pass": "Epic"
+  },
+  {
+    "name": "Kicking Horse",
+    "id": "e6c98a637d3cd005ff347ae39bf871e552d2f515",
+    "pass": "Epic"
+  },
+  {
+    "name": "Kimberley Alpine Resort",
+    "id": "21a09b7906f79fa15a318591ac2fa523afd226ae",
+    "pass": "Epic"
+  },
+  {
+    "name": "Nakiska",
+    "id": "629f41736fe9e223bb92ecae332e0d736721da14",
+    "pass": "Epic"
+  },
+  {
+    "name": "Mont-Sainte Anne",
+    "id": "c5a4ca2d1865ae42f167e86b7e0e280ef071cf7b ",
+    "pass": "Epic"
+  },
+  {
+    "name": "Stoneham Mountain Resort",
+    "id": "42397518ef91437837761b1b7f18a502a0d7cc47 ",
+    "pass": "Epic"
+  },
+  {
+    "name": "Arapahoe Basin",
+    "id": "9d3d1750f6b9ec77e084ef4b7ce1f92b85c426aa",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Winter Park",
+    "id": "5aa196eca39d1d432a09fe458980fc38e89bf310",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Copper Mountain",
+    "id": "7464f379f1806addd8f3976a39005c4628587fac",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Steamboat",
+    "id": "55706aafcde1a3dae53d8126f68bfc38be7cde0b",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Eldora Mountain",
+    "id": "e08860c09eedad62b1d800d9494c664aac1c76e2",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Palisades Tahoe",
+    "id": "8c92529c13c2ec8e67ea693eb500f4e0ddf08164",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Mammoth Mountain",
+    "id": "bf0c4d265b68ee4f2cd4f75ad0728f6edb6425bf",
+    "pass": "Ikon"
+  },
+  {
+    "name": "June Mountain",
+    "id": "1f94daed2b308fa325be064eebc82535fcc3861b",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Big Bear Mountain Resort",
+    "id": "78bac1237b378a398d712ba2cc962ddf9d1c6479",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Schweitzer",
+    "id": "7436590436516aafc9af4f82acfaf6f76a4ff320",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Snow Valley",
+    "id": "a0768ac2bb505b44d0688dbcd4c94c4a2ce0e70a",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Stratton",
+    "id": "76d2732379666c2a1a0b22913d755625f1a01407",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Snowshoe",
+    "id": "15db5ab0c4507ad6daab457f48e39f4158acd596",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Sugarbush",
+    "id": "6819bc016ab226b6396d89068159a59bda2ffff2",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Tremblant",
+    "id": "57ae08fed6a2d9f34bd70c4c3c06332bd44134a6",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Blue Mountain",
+    "id": "9de82ff34da1eb1daebb3a913e82e7551b12d017",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Solitude",
+    "id": "39acfd00b67cb2ed69a4f21138f2feaee41e4166",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Crystal Mountain",
+    "id": "d64d637a75ee319d8d3329d4d8520f15f7ed5b0b",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Alta",
+    "id": "1ed0956425aee36dbbddd76927a920fb9fd8b590",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Snowbird",
+    "id": "aeb6db58121288dc0287b4254df4adbe5a40c3ec",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Aspen Highlands",
+    "id": "17ecc8c89d952d6627cb8b0daf438530fb2d99e3",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Aspen Mountain",
+    "id": "70836e5ba7d3771832e2df97023bf1a147c3c271",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Buttermilk",
+    "id": "19882ff87499c75d087b673cb2adc41e66183db7",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Snowmass",
+    "id": "7d5123086c5d8855b491bf4905f3b6c5e336c846",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Alyeska",
+    "id": "7c5e33822a418dfd47543d5f090e694f5658c727",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Big Sky",
+    "id": "6d6ab1180556939241e0990382a132d26f9a86c6",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Brighton",
+    "id": "1d39d98c17338120b4894722b13a744046a5b42b",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Deer Valley",
+    "id": "669b4354556ca23d707209c92356fc410b101108",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Snowbasin",
+    "id": "02c5a8b2e7e93dd3b178428c9cb33794f8fc673a",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Jackson Hole",
+    "id": "a24d6d9af469ce15a3375ac405b71644d72ec49d",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Mt. Bachelor",
+    "id": "d2de9aebeedb736c0bbef6911782b5fdfe2246b1",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Sierra-at-Tahoe",
+    "id": "39c5bede28969f08ff0f725985d007a3fd3eaae6",
+    "pass": "Ikon"
+  },
+  {
+    "name": "The Highlands",
+    "id": "a1f17de97c8c061349925b4e149ab07001d98a9b ",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Boyne Mountain",
+    "id": "086def7bbddd6cbafb09985c44977d3ba7f04b73",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Blue Mountain Resort",
+    "id": "b80dd18fc32df44f83dad7576cdbb0316286ef66",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Camelback Resort",
+    "id": "a69e726ad816e743f1abff11e3813659637a008f",
+    "pass": "Ikon"
+  },
+  {
+    "name": "The Summit at Snoqualmie",
+    "id": "d614053877b338a4708156d3b8073e04c9387b1e ",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Sun Valley",
+    "id": "694e7055dd04f5b08561292bf11168f8cc95ef2e",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Revelstoke",
+    "id": "4a1b9ade531ddd383fdf939cf91edf6d0f1d3b0f",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Red Mountain",
+    "id": "9b5fd34b95d6db431c3fc728841cc6eb81bf4f25",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Sun Peaks Resort",
+    "id": "ad0f4ca1e398fc733381875ddb05ef08c0215ae7",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Cypress Mountain",
+    "id": "09eef878dd7b616f541af6195ea05ca50f605a45",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Panorama",
+    "id": "02277372bbcf2f2b211145d6bec668b13f5f0c35",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Le Massif de Charlevoix",
+    "id": "200b1b6d68c782a95cd0d6217195eed60297de7d",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Sunday River",
+    "id": "54bceeb62ccd2209e50b8dc7e06b8daa1727ce34",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Sugarloaf",
+    "id": "5c5fcebef97c88619e841e8be5f8dbb92fcc2899",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Loon Mountain",
+    "id": "a858009848aad8498631e2f2e825f64f557363c4",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Taos",
+    "id": "d384d3efef189d58a9bcc558a821feac9874fa55",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Killington",
+    "id": "7df36f601b9f9e0824f6b57943ff98586584da80",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Pico",
+    "id": "3d62b332f36fda28bf4444ac472b705b5923349b",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Banff Sunshine",
+    "id": "ae6ee1b64d24f32a1a020aa4448d29b83dd1e43f",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Lake Louise",
+    "id": "53c053f1d0dfaaad0e7fe16f2582bfb37f29e02c",
+    "pass": "Ikon"
+  },
+  {
+    "name": "Norquay",
+    "id": "b84ee4b0cdfdd2fad20c93f01dec64b7976c79f3",
+    "pass": "Ikon"
+  }
+]
