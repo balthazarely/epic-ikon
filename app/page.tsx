@@ -62,7 +62,7 @@ export default function Home() {
       <div className="fixed top-6 right-6 z-30 flex shadow-2xl flex-col gap-3 w-64 ">
         {/* Ikon vs Epic image card */}
         <div
-          className="rounded-xl border border-white/10 overflow-hidden"
+          className={`rounded-xl border border-white/10 overflow-hidden transition-all duration-700 ease-out ${introComplete ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8 pointer-events-none"}`}
           style={{
             background: "rgba(4, 14, 28, 0.85)",
             backdropFilter: "blur(12px)",
@@ -78,7 +78,9 @@ export default function Home() {
           </p>
         </div>
 
-        <Legend resorts={resorts ?? []} visible={introComplete} />
+        <div className={`transition-all duration-700 ease-out delay-300 ${introComplete ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8 pointer-events-none"}`}>
+          <Legend resorts={resorts ?? []} visible={introComplete} />
+        </div>
       </div>
       <HelpModal visible={introComplete} />
       <Globe

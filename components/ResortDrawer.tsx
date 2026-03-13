@@ -32,10 +32,17 @@ const DIFFICULTY_COLORS: Record<string, string> = {
   other: "#6b7280",
 };
 
-export default function ResortDrawer({ resort, resorts, onClose, onNavigate }: ResortDrawerProps) {
+export default function ResortDrawer({
+  resort,
+  resorts,
+  onClose,
+  onNavigate,
+}: ResortDrawerProps) {
   const [fullscreen, setFullscreen] = useState(false);
 
-  const currentIndex = resort ? resorts.findIndex((r) => r.id === resort.id) : -1;
+  const currentIndex = resort
+    ? resorts.findIndex((r) => r.id === resort.id)
+    : -1;
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex >= 0 && currentIndex < resorts.length - 1;
 
@@ -69,7 +76,7 @@ export default function ResortDrawer({ resort, resorts, onClose, onNavigate }: R
 
       {/* Drawer */}
       <div
-        className={`fixed z-50 flex flex-col shadow-2xl transition-all duration-300 ease-in-out ${fullscreen ? "inset-0" : `top-0 right-0 h-full w-full max-w-2xl ${resort ? "translate-x-0" : "translate-x-full"}`}`}
+        className={`fixed z-50 flex flex-col overflow-y-auto shadow-2xl transition-all duration-300 ease-in-out ${fullscreen ? "inset-0" : `top-0 right-0 h-full w-full max-w-2xl ${resort ? "translate-x-0" : "translate-x-full"}`}`}
         style={{
           background: "rgba(6, 20, 40, 0.88)",
           backdropFilter: "blur(16px)",
@@ -100,7 +107,9 @@ export default function ResortDrawer({ resort, resorts, onClose, onNavigate }: R
               {[resort?.region, resort?.country].filter(Boolean).join(", ")}
             </p>
             {resort?.description && (
-              <p className="text-white/50 text-sm mt-2 leading-relaxed">{resort.description}</p>
+              <p className="text-white/50 text-sm mt-2 leading-relaxed">
+                {resort.description}
+              </p>
             )}
             <div className="flex items-center gap-2 mt-2 flex-wrap">
               {resort?.website && (
@@ -122,37 +131,77 @@ export default function ResortDrawer({ resort, resorts, onClose, onNavigate }: R
           </div>
           <div className="flex items-center gap-2 ml-4 shrink-0">
             <button
-              onClick={() => { if (hasPrev) onNavigate(resorts[currentIndex - 1]!); }}
+              onClick={() => {
+                if (hasPrev) onNavigate(resorts[currentIndex - 1]!);
+              }}
               disabled={!hasPrev}
               className="text-white/40 hover:text-white transition-colors mt-1 disabled:opacity-20 disabled:cursor-not-allowed"
               title="Previous resort"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M10 3L5 8l5 5" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <path
+                  d="M10 3L5 8l5 5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
             <button
-              onClick={() => { if (hasNext) onNavigate(resorts[currentIndex + 1]!); }}
+              onClick={() => {
+                if (hasNext) onNavigate(resorts[currentIndex + 1]!);
+              }}
               disabled={!hasNext}
               className="text-white/40 hover:text-white transition-colors mt-1 disabled:opacity-20 disabled:cursor-not-allowed"
               title="Next resort"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M6 3l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <path
+                  d="M6 3l5 5-5 5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
             <div className="w-px h-4 bg-white/10 mx-1" />
             <button
-              onClick={() => setFullscreen(v => !v)}
+              onClick={() => setFullscreen((v) => !v)}
               className="text-white/40 hover:text-white transition-colors mt-1"
               title={fullscreen ? "Exit fullscreen" : "Fullscreen"}
             >
               {fullscreen ? (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
                   <path d="M6 2H2v4M10 2h4v4M6 14H2v-4M10 14h4v-4" />
                 </svg>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
                   <path d="M2 6V2h4M10 2h4v4M2 10v4h4M14 10v4h-4" />
                 </svg>
               )}
@@ -174,7 +223,10 @@ export default function ResortDrawer({ resort, resorts, onClose, onNavigate }: R
               {resort && <ResortMap key="fs" resort={resort} />}
               <div
                 className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 px-4 py-2 rounded-full border border-white/10 pointer-events-none select-none"
-                style={{ background: "rgba(4, 14, 28, 0.75)", backdropFilter: "blur(8px)" }}
+                style={{
+                  background: "rgba(4, 14, 28, 0.75)",
+                  backdropFilter: "blur(8px)",
+                }}
               >
                 <Hint icon="🖱️" primary="Left drag" secondary="Pan" />
                 <div className="w-px h-4 bg-white/10" />
@@ -187,29 +239,88 @@ export default function ResortDrawer({ resort, resorts, onClose, onNavigate }: R
             {/* Info panel — fixed width, scrollable */}
             <div className="w-96 shrink-0 border-l border-white/10 flex flex-col overflow-y-auto">
               <div className="grid grid-cols-3 border-b border-white/10 shrink-0">
-                <StatBar label="Vertical Drop" value={resort?.verticalDrop} display={resort ? formatElevation(resort.verticalDrop) : "—"} max={REF.vertical} />
-                <StatBar label="Total Runs" value={resort?.totalRuns} display={resort ? String(resort.totalRuns) : "—"} max={REF.runs} />
-                <StatBar label="Lifts" value={resort?.lifts} display={resort ? String(resort.lifts) : "—"} max={REF.lifts} />
+                <StatBar
+                  label="Vertical Drop"
+                  value={resort?.verticalDrop}
+                  display={resort ? formatElevation(resort.verticalDrop) : "—"}
+                  max={REF.vertical}
+                />
+                <StatBar
+                  label="Total Runs"
+                  value={resort?.totalRuns}
+                  display={resort ? String(resort.totalRuns) : "—"}
+                  max={REF.runs}
+                />
+                <StatBar
+                  label="Lifts"
+                  value={resort?.lifts}
+                  display={resort ? String(resort.lifts) : "—"}
+                  max={REF.lifts}
+                />
               </div>
               <div className="grid grid-cols-3 border-b border-white/10 shrink-0">
-                <StatBar label="Summit" value={resort?.maxElevation ?? undefined} display={resort?.maxElevation != null ? formatElevation(resort.maxElevation) : "—"} max={REF.summit} />
-                <StatBar label="Base" value={resort?.minElevation ?? undefined} display={resort?.minElevation != null ? formatElevation(resort.minElevation) : "—"} max={REF.base} />
-                <StatBar label="Trail Mi" value={resort?.totalTrailKm ?? undefined} display={resort?.totalTrailKm ? formatDistance(resort.totalTrailKm) : "—"} max={REF.trailKm} />
+                <StatBar
+                  label="Summit"
+                  value={resort?.maxElevation ?? undefined}
+                  display={
+                    resort?.maxElevation != null
+                      ? formatElevation(resort.maxElevation)
+                      : "—"
+                  }
+                  max={REF.summit}
+                />
+                <StatBar
+                  label="Base"
+                  value={resort?.minElevation ?? undefined}
+                  display={
+                    resort?.minElevation != null
+                      ? formatElevation(resort.minElevation)
+                      : "—"
+                  }
+                  max={REF.base}
+                />
+                <StatBar
+                  label="Trail Mi"
+                  value={resort?.totalTrailKm ?? undefined}
+                  display={
+                    resort?.totalTrailKm
+                      ? formatDistance(resort.totalTrailKm)
+                      : "—"
+                  }
+                  max={REF.trailKm}
+                />
               </div>
               {diffEntries.length > 0 && (
                 <div className="px-6 py-4 border-b border-white/10">
-                  <span className="text-white/30 text-[10px] uppercase tracking-widest block mb-2">Runs by Difficulty</span>
+                  <span className="text-white/30 text-[10px] uppercase tracking-widest block mb-2">
+                    Runs by Difficulty
+                  </span>
                   <div className="flex h-2 w-full rounded-full overflow-hidden gap-px mb-3">
                     {diffEntries.map(([d, count]) => (
-                      <div key={d} style={{ width: `${((count ?? 0) / totalForBar) * 100}%`, background: DIFFICULTY_COLORS[d] ?? "#6b7280" }} />
+                      <div
+                        key={d}
+                        style={{
+                          width: `${((count ?? 0) / totalForBar) * 100}%`,
+                          background: DIFFICULTY_COLORS[d] ?? "#6b7280",
+                        }}
+                      />
                     ))}
                   </div>
                   <div className="flex flex-wrap gap-x-4 gap-y-1">
                     {diffEntries.map(([d, count]) => (
                       <div key={d} className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full shrink-0" style={{ background: DIFFICULTY_COLORS[d] ?? "#6b7280" }} />
-                        <span className="text-white/50 text-xs capitalize">{d}</span>
-                        <span className="text-white/70 text-xs font-medium">{count}</span>
+                        <div
+                          className="w-2 h-2 rounded-full shrink-0"
+                          style={{
+                            background: DIFFICULTY_COLORS[d] ?? "#6b7280",
+                          }}
+                        />
+                        <span className="text-white/50 text-xs capitalize">
+                          {d}
+                        </span>
+                        <span className="text-white/70 text-xs font-medium">
+                          {count}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -219,42 +330,15 @@ export default function ResortDrawer({ resort, resorts, onClose, onNavigate }: R
           </div>
         ) : (
           /* ── Normal: stacked column ── */
-          <>
-            <div className="grid grid-cols-3 border-b border-white/10 shrink-0">
-              <StatBar label="Vertical Drop" value={resort?.verticalDrop} display={resort ? formatElevation(resort.verticalDrop) : "—"} max={REF.vertical} />
-              <StatBar label="Total Runs" value={resort?.totalRuns} display={resort ? String(resort.totalRuns) : "—"} max={REF.runs} />
-              <StatBar label="Lifts" value={resort?.lifts} display={resort ? String(resort.lifts) : "—"} max={REF.lifts} />
-            </div>
-            <div className="grid grid-cols-4 border-b border-white/10 shrink-0">
-              <StatBar label="Summit" value={resort?.maxElevation ?? undefined} display={resort?.maxElevation != null ? formatElevation(resort.maxElevation) : "—"} max={REF.summit} />
-              <StatBar label="Base" value={resort?.minElevation ?? undefined} display={resort?.minElevation != null ? formatElevation(resort.minElevation) : "—"} max={REF.base} />
-              <StatBar label="Trail Mi" value={resort?.totalTrailKm ?? undefined} display={resort?.totalTrailKm ? formatDistance(resort.totalTrailKm) : "—"} max={REF.trailKm} />
-              <StatBar label="Snowmaking" value={resort?.snowmakingKm ?? undefined} display={resort?.snowmakingKm ? formatDistance(resort.snowmakingKm) : "—"} max={REF.snowmaking} />
-            </div>
-            {diffEntries.length > 0 && (
-              <div className="px-6 py-4 border-b border-white/10 shrink-0">
-                <span className="text-white/30 text-[10px] uppercase tracking-widest block mb-2">Runs by Difficulty</span>
-                <div className="flex h-2 w-full rounded-full overflow-hidden gap-px mb-3">
-                  {diffEntries.map(([d, count]) => (
-                    <div key={d} style={{ width: `${((count ?? 0) / totalForBar) * 100}%`, background: DIFFICULTY_COLORS[d] ?? "#6b7280" }} />
-                  ))}
-                </div>
-                <div className="flex flex-wrap gap-x-4 gap-y-1">
-                  {diffEntries.map(([d, count]) => (
-                    <div key={d} className="flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full shrink-0" style={{ background: DIFFICULTY_COLORS[d] ?? "#6b7280" }} />
-                      <span className="text-white/50 text-xs capitalize">{d}</span>
-                      <span className="text-white/70 text-xs font-medium">{count}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            <div className="flex-1 min-h-0 relative">
+          <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 min-h-80 relative">
               {resort && <ResortMap key="normal" resort={resort} />}
               <div
                 className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 px-4 py-2 rounded-full border border-white/10 pointer-events-none select-none"
-                style={{ background: "rgba(4, 14, 28, 0.75)", backdropFilter: "blur(8px)" }}
+                style={{
+                  background: "rgba(4, 14, 28, 0.75)",
+                  backdropFilter: "blur(8px)",
+                }}
               >
                 <Hint icon="🖱️" primary="Left drag" secondary="Pan" />
                 <div className="w-px h-4 bg-white/10" />
@@ -263,7 +347,107 @@ export default function ResortDrawer({ resort, resorts, onClose, onNavigate }: R
                 <Hint icon="⊕" primary="Scroll" secondary="Zoom" />
               </div>
             </div>
-          </>
+            <div className="shrink-0">
+            <div className="grid grid-cols-3 border-b border-white/10">
+              <StatBar
+                label="Vertical Drop"
+                value={resort?.verticalDrop}
+                display={resort ? formatElevation(resort.verticalDrop) : "—"}
+                max={REF.vertical}
+              />
+              <StatBar
+                label="Total Runs"
+                value={resort?.totalRuns}
+                display={resort ? String(resort.totalRuns) : "—"}
+                max={REF.runs}
+              />
+              <StatBar
+                label="Lifts"
+                value={resort?.lifts}
+                display={resort ? String(resort.lifts) : "—"}
+                max={REF.lifts}
+              />
+            </div>
+            <div className="grid grid-cols-4 border-b border-white/10">
+              <StatBar
+                label="Summit"
+                value={resort?.maxElevation ?? undefined}
+                display={
+                  resort?.maxElevation != null
+                    ? formatElevation(resort.maxElevation)
+                    : "—"
+                }
+                max={REF.summit}
+              />
+              <StatBar
+                label="Base"
+                value={resort?.minElevation ?? undefined}
+                display={
+                  resort?.minElevation != null
+                    ? formatElevation(resort.minElevation)
+                    : "—"
+                }
+                max={REF.base}
+              />
+              <StatBar
+                label="Trail Mi"
+                value={resort?.totalTrailKm ?? undefined}
+                display={
+                  resort?.totalTrailKm
+                    ? formatDistance(resort.totalTrailKm)
+                    : "—"
+                }
+                max={REF.trailKm}
+              />
+              <StatBar
+                label="Snowmaking"
+                value={resort?.snowmakingKm ?? undefined}
+                display={
+                  resort?.snowmakingKm
+                    ? formatDistance(resort.snowmakingKm)
+                    : "—"
+                }
+                max={REF.snowmaking}
+              />
+            </div>
+            {diffEntries.length > 0 && (
+              <div className="px-6 py-4 border-b border-white/10">
+                <span className="text-white/30 text-[10px] uppercase tracking-widest block mb-2">
+                  Runs by Difficulty
+                </span>
+                <div className="flex h-2 w-full rounded-full overflow-hidden gap-px mb-3">
+                  {diffEntries.map(([d, count]) => (
+                    <div
+                      key={d}
+                      style={{
+                        width: `${((count ?? 0) / totalForBar) * 100}%`,
+                        background: DIFFICULTY_COLORS[d] ?? "#6b7280",
+                      }}
+                    />
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-x-4 gap-y-1">
+                  {diffEntries.map(([d, count]) => (
+                    <div key={d} className="flex items-center gap-1.5">
+                      <div
+                        className="w-2 h-2 rounded-full shrink-0"
+                        style={{
+                          background: DIFFICULTY_COLORS[d] ?? "#6b7280",
+                        }}
+                      />
+                      <span className="text-white/50 text-xs capitalize">
+                        {d}
+                      </span>
+                      <span className="text-white/70 text-xs font-medium">
+                        {count}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            </div>
+          </div>
         )}
       </div>
     </>

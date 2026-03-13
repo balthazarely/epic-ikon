@@ -84,6 +84,7 @@ export default function Globe({
     if (!mountRef.current) return;
     const mountEl = mountRef.current;
     let cancelled = false;
+    const loadStart = performance.now();
 
     const width = mountEl.clientWidth;
     const height = mountEl.clientHeight;
@@ -124,18 +125,14 @@ export default function Globe({
       "position",
       new THREE.BufferAttribute(starPositions, 3),
     );
-    scene.add(
-      new THREE.Points(
-        starGeo,
-        new THREE.PointsMaterial({
-          color: 0xffffff,
-          size: R * 0.04,
-          sizeAttenuation: true,
-          transparent: true,
-          opacity: 0.7,
-        }),
-      ),
-    );
+    const starMat = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: R * 0.04,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0,
+    });
+    scene.add(new THREE.Points(starGeo, starMat));
 
     // --- Load all textures then build scene ---
     const globeGeo = new THREE.SphereGeometry(R, 64, 64);
@@ -163,7 +160,11 @@ export default function Globe({
         const epicTex = makePinTexture(epicTexRaw.image as HTMLImageElement);
         const ikonTex = makePinTexture(ikonTexRaw.image as HTMLImageElement);
         if (cancelled) return;
-        setReady(true);
+        const elapsed = performance.now() - loadStart;
+        const remaining = Math.max(0, 2000 - elapsed);
+        setTimeout(() => {
+          if (!cancelled) setReady(true);
+        }, remaining);
 
         // Milky Way skybox
         scene.add(
@@ -547,6 +548,9 @@ export default function Globe({
               INTRO.START_ROT_Y + (INTRO.END_ROT_Y - INTRO.START_ROT_Y) * e;
             globeGroup.rotation.x = INTRO.END_ROT_X * e;
 
+            // Fade stars in during the second half of the intro
+            starMat.opacity = Math.max(0, (t - 0.5) / 0.5) * 0.7;
+
             // Trigger legend slide-in 700ms before animation ends
             if (!legendTriggered && t >= 0.75) {
               legendTriggered = true;
@@ -624,11 +628,44 @@ export default function Globe({
           opacity: ready ? 0 : 1,
         }}
       >
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white/80 animate-spin" />
-          <p className="text-white/40 text-sm tracking-widest uppercase">
-            Loading
-          </p>
+        <div className="flex flex-col items-center gap-6">
+          {/* Wireframe globe icon */}
+          <div className="relative w-16 h-16">
+            {/* Outer ring */}
+            <div className="absolute inset-0 rounded-full border border-white/20" />
+            {/* Equator ellipse */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div
+                className="w-full h-[40%] rounded-full border border-white/15"
+                style={{ transform: "scaleY(0.35)" }}
+              />
+            </div>
+            {/* Meridian ellipse — spinning */}
+            <div
+              className="absolute inset-0 flex items-center justify-center animate-spin"
+              style={{ animationDuration: "3s" }}
+            >
+              <div
+                className="w-[40%] h-full rounded-full border border-white/25"
+                style={{ transform: "scaleX(0.38)" }}
+              />
+            </div>
+            {/* Glow dot at top */}
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-300/60" />
+            {/* Pulse ring */}
+            <div
+              className="absolute inset-0 rounded-full border border-blue-400/20 animate-ping"
+              style={{ animationDuration: "2s" }}
+            />
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-white/70 text-sm font-semibold tracking-widest uppercase">
+              Epic vs. Ikon
+            </p>
+            <p className="text-white/30 text-xs tracking-wider">
+              Loading ski resorts…
+            </p>
+          </div>
         </div>
       </div>
     </div>
