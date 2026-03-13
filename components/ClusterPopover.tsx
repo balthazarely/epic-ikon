@@ -45,6 +45,8 @@ export default function ClusterPopover({
         background: "rgba(6, 20, 40, 0.92)",
         backdropFilter: "blur(12px)",
       }}
+      onMouseDown={e => e.stopPropagation()}
+      onMouseUp={e => e.stopPropagation()}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">

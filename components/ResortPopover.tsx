@@ -50,6 +50,8 @@ export default function ResortPopover({
         background: "rgba(6, 20, 40, 0.92)",
         backdropFilter: "blur(12px)",
       }}
+      onMouseDown={e => e.stopPropagation()}
+      onMouseUp={e => e.stopPropagation()}
     >
       {/* Header */}
       <div className="flex items-start justify-between px-4 pt-4 pb-2">
@@ -63,9 +65,18 @@ export default function ResortPopover({
               <span>Back to cluster</span>
             </button>
           )}
-          <h3 className="text-white font-bold text-sm leading-tight">
-            {resort.name}
-          </h3>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="text-white font-bold text-sm leading-tight">
+              {resort.name}
+            </h3>
+            {resort.pass && (
+              <img
+                src={resort.pass === "Epic" ? "/Epic.png" : "/Ikon.png"}
+                alt={resort.pass}
+                className="h-4 w-auto object-contain opacity-90 rounded-sm ring-1 ring-white/25"
+              />
+            )}
+          </div>
           <p className="text-white/50 text-xs mt-0.5">{resort.country}</p>
         </div>
         <button
@@ -75,22 +86,6 @@ export default function ResortPopover({
           ×
         </button>
       </div>
-
-      {/* Pass badge */}
-      {resort.pass && (
-        <div className="px-4 pb-2">
-          <span
-            className="text-xs font-semibold px-2 py-0.5 rounded-full"
-            style={{
-              background: resort.pass === "Epic" ? "#FF8B0022" : "#07214122",
-              color: resort.pass === "Epic" ? "#FF8B00" : "#7aacff",
-              border: `1px solid ${resort.pass === "Epic" ? "#FF8B0055" : "#7aacff55"}`,
-            }}
-          >
-            {resort.pass}
-          </span>
-        </div>
-      )}
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-px bg-white/5 border-t border-white/10">

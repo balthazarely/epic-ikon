@@ -55,10 +55,10 @@ export default function Globe({
 }: GlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
-  const { activePasses } = useFilter();
+  const { activePasses, activePassTypes, minVertical, minRuns, minLifts } = useFilter();
   const spritesRef = useRef<THREE.Sprite[]>([]);
   const spritePassTypesRef = useRef<(string | undefined)[]>([]);
-  const applyFilterRef = useRef<((passes: Set<string>) => void) | null>(null);
+  const applyFilterRef = useRef<((passes: Set<string>, passTypes: Set<string>, minVert: number, minRunsVal: number, minLiftsVal: number) => void) | null>(null);
   const isDragging = useRef(false);
   const hasDragged = useRef(false);
   const previousMouse = useRef({ x: 0, y: 0 });
@@ -78,7 +78,10 @@ export default function Globe({
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 5000);
     camera.position.z = R * 2;
-    camera.setViewOffset(width * 1.5, height, width * 0.5, 0, width, height);
+    // Cap how far the globe can shift left on very wide screens
+    const globeOffset = Math.min(width * 0.5, 380);
+    // Start centered; will animate to left-offset during intro
+    camera.setViewOffset(width, height, 0, 0, width, height);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
@@ -222,8 +225,8 @@ export default function Globe({
 
             const clusterCount = isCluster ? point.resorts.length : 1;
             const scale = isCluster
-              ? R * (0.028 + Math.min(clusterCount, 50) * 0.0006)
-              : R * 0.018;
+              ? R * (0.034 + Math.min(clusterCount, 50) * 0.0007)
+              : R * 0.024;
 
             const sprite = new THREE.Sprite(
               new THREE.SpriteMaterial({
@@ -267,17 +270,60 @@ export default function Globe({
         };
         let activeKey = "all";
 
-        applyFilterRef.current = (passes: Set<string>) => {
+        applyFilterRef.current = (
+          passes: Set<string>,
+          passTypes: Set<string>,
+          minVert: number,
+          minRunsVal: number,
+          minLiftsVal: number,
+        ) => {
           const key =
             passes.size === 2 ? "all" : passes.has("Ikon") ? "Ikon" : "Epic";
-          if (key === activeKey) return;
-          setsByKey[activeKey]!.sprites.forEach((s) => (s.visible = false));
-          setsByKey[key]!.sprites.forEach((s) => (s.visible = true));
-          activeKey = key;
-          activeSprites = setsByKey[key]!.sprites;
-          activePositions = setsByKey[key]!.localPositions;
-          activePayloads = setsByKey[key]!.payloads;
-          spritesRef.current = activeSprites;
+
+          // Switch base set if needed
+          if (key !== activeKey) {
+            setsByKey[activeKey]!.sprites.forEach((s) => (s.visible = false));
+            activeKey = key;
+            activeSprites = setsByKey[key]!.sprites;
+            activePositions = setsByKey[key]!.localPositions;
+            activePayloads = setsByKey[key]!.payloads;
+            spritesRef.current = activeSprites;
+          }
+
+          const allPassTypes = passTypes.size >= 2;
+          const noRangeFilter = minVert === 0 && minRunsVal === 0 && minLiftsVal === 0;
+
+          function passesFilter(r: Resort): boolean {
+            if (!allPassTypes && r.passType) {
+              if (!passTypes.has(r.passType)) return false;
+            }
+            if (noRangeFilter) return true;
+            return (
+              r.verticalDrop >= minVert &&
+              r.totalRuns >= minRunsVal &&
+              r.lifts >= minLiftsVal
+            );
+          }
+
+          setsByKey[key]!.sprites.forEach((sprite, i) => {
+            const payload = setsByKey[key]!.payloads[i]!;
+            if (Array.isArray(payload)) {
+              const filtered = payload.filter(passesFilter);
+              sprite.visible = filtered.length > 0;
+              if (sprite.visible) {
+                const hasIkon = filtered.some((r) => r.pass === "Ikon");
+                const hasEpic = filtered.some((r) => r.pass === "Epic");
+                sprite.material.map = makeClusterTexture(
+                  filtered.length,
+                  hasIkon ? IKON_COLOR : EPIC_COLOR,
+                  hasIkon && hasEpic ? EPIC_COLOR : undefined,
+                );
+                sprite.material.needsUpdate = true;
+              }
+            } else {
+              sprite.visible = passesFilter(payload);
+            }
+          });
         };
 
         // --- Selection glow ---
@@ -302,7 +348,7 @@ export default function Globe({
           );
           const raycaster = new THREE.Raycaster();
           raycaster.setFromCamera(mouse, camera);
-          const hits = raycaster.intersectObjects(activeSprites);
+          const hits = raycaster.intersectObjects(activeSprites.filter(s => s.visible));
           return hits.length > 0 ? (hits[0]!.object as THREE.Sprite) : null;
         }
 
@@ -417,13 +463,22 @@ export default function Globe({
               (R * INTRO.END_Z_FACTOR - R * INTRO.START_Z_FACTOR) * e;
 
             // Arc: camera starts offset on X and Y, sweeps to center
-            // Uses a sine curve so it starts moving fast then settles smoothly
             const arcX =
               R * INTRO.START_X_OFFSET * Math.sin((1 - e) * Math.PI * 0.5);
             const arcY = R * 0.3 * Math.sin((1 - e) * Math.PI * 0.5);
             camera.position.x = arcX;
             camera.position.y = arcY;
-            camera.lookAt(0, 0, 0); // keep globe centered as camera swings
+            camera.lookAt(0, 0, 0);
+
+            // Slide globe from centered to left-offset as animation completes
+            camera.setViewOffset(
+              width + globeOffset * e,
+              height,
+              globeOffset * e,
+              0,
+              width,
+              height,
+            );
 
             // Globe rotation (same as before)
             globeGroup.rotation.y =
@@ -434,6 +489,7 @@ export default function Globe({
               introComplete = true;
               camera.position.x = 0;
               camera.position.y = 0;
+              camera.setViewOffset(width + globeOffset, height, globeOffset, 0, width, height);
               renderer.domElement.style.cursor = "grab";
             }
           }
@@ -473,8 +529,9 @@ export default function Globe({
   }, [resorts]);
 
   useEffect(() => {
-    applyFilterRef.current?.(activePasses);
-  }, [activePasses]);
+    applyFilterRef.current?.(activePasses, activePassTypes, minVertical, minRuns, minLifts);
+  }, [activePasses, activePassTypes, minVertical, minRuns, minLifts]);
+
 
   return (
     <div className="w-full h-full relative">

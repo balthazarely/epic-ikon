@@ -62,11 +62,16 @@ export function makeClusterTexture(count: number, hex: number, hex2?: number): T
     ctx.fill();
   }
 
+  ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+  ctx.shadowBlur = 4;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 1;
   ctx.fillStyle = "#ffffff";
   ctx.font = `bold ${count > 99 ? 18 : 24}px Arial`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(String(count), CX, CX);
+  ctx.shadowColor = "transparent";
   return new THREE.CanvasTexture(canvas);
 }
 

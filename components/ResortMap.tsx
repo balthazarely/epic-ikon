@@ -90,11 +90,30 @@ export default function ResortMap({ resort }: { resort: Resort }) {
     };
   }, [resort.lng, resort.lat]);
 
+  function resetView() {
+    mapInstanceRef.current?.flyTo({
+      center: [resort.lng, resort.lat],
+      zoom: 13,
+      pitch: 65,
+      bearing: -20,
+      duration: 1200,
+    });
+  }
+
   return (
-    <div
-      ref={mapRef}
-      className="w-full h-full"
-      style={{ background: "#ffffff" }}
-    />
+    <div className="relative w-full h-full">
+      <div ref={mapRef} className="w-full h-full" style={{ background: "#0a1628" }} />
+      <button
+        onClick={resetView}
+        className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white/70 hover:text-white transition-colors border border-white/10 hover:border-white/25"
+        style={{ background: "rgba(6, 20, 40, 0.85)", backdropFilter: "blur(8px)" }}
+      >
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M10 4A4.5 4.5 0 1 0 9.5 8" />
+          <polyline points="10 1 10 4 7 4" />
+        </svg>
+        Reset view
+      </button>
+    </div>
   );
 }

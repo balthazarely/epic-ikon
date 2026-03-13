@@ -37,7 +37,7 @@ export default function Home() {
           "radial-gradient(ellipse at center, #061428 0%, #020508 100%)",
       }}
     >
-      <Legend />
+      <Legend resorts={resorts ?? []} />
       <Globe
         resorts={resorts ?? []}
         onResortClick={(resort, pos) => setPopover({ resort, pos })}
