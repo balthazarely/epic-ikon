@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 
-const LS_KEY = "global-listen:visited";
-
 interface HelpModalProps {
   visible: boolean;
 }
@@ -70,17 +68,7 @@ export default function HelpModal({ visible }: HelpModalProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Auto-open on first visit once the intro is done
-  useEffect(() => {
-    if (!visible) return;
-    const isFirstVisit = !localStorage.getItem(LS_KEY);
-    if (isFirstVisit) setOpen(true);
-  }, [visible]);
-
-  const handleClose = () => {
-    localStorage.setItem(LS_KEY, "1");
-    setOpen(false);
-  };
+  const handleClose = () => setOpen(false);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -103,14 +91,15 @@ export default function HelpModal({ visible }: HelpModalProps) {
       {/* Trigger button */}
       <button
         onClick={() => setOpen(true)}
-        className={`fixed top-6 left-6 z-30 w-9 h-9 rounded-full flex items-center justify-center border border-white/15 text-white/50 hover:text-white hover:border-white/30 transition-all duration-700 ease-out ${visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
+        className={`fixed top-6 left-6 z-30 w-11 h-11 rounded-full flex items-center justify-center border border-white/20 text-white/60 hover:text-white hover:border-white/40 transition-all duration-700 ease-out ${visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
         style={{
           background: "rgba(4, 14, 28, 0.85)",
           backdropFilter: "blur(12px)",
+          boxShadow: "0 0 16px rgba(59, 130, 246, 0.2), 0 0 32px rgba(59, 130, 246, 0.08)",
         }}
         aria-label="How to use"
       >
-        <span className="text-sm font-semibold leading-none">?</span>
+        <span className="text-base font-semibold leading-none">?</span>
       </button>
 
       {/* Backdrop */}

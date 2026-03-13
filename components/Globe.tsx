@@ -259,14 +259,17 @@ export default function Globe({
 
             let texture: THREE.Texture;
             if (isCluster) {
-              const hasIkon = point.resorts.some((r) => r.pass === "Ikon");
-              const hasEpic = point.resorts.some((r) => r.pass === "Epic");
+              const ikonCount = point.resorts.filter((r) => r.pass === "Ikon").length;
+              const epicCount = point.resorts.filter((r) => r.pass === "Epic").length;
+              const hasIkon = ikonCount > 0;
+              const hasEpic = epicCount > 0;
               texture =
                 hasIkon && hasEpic
                   ? makeClusterTexture(
                       point.resorts.length,
                       IKON_COLOR,
                       EPIC_COLOR,
+                      ikonCount / (ikonCount + epicCount),
                     )
                   : makeClusterTexture(
                       point.resorts.length,
@@ -368,12 +371,15 @@ export default function Globe({
               filteredPayloads.push(filtered);
               sprite.visible = filtered.length > 0;
               if (sprite.visible) {
-                const hasIkon = filtered.some((r) => r.pass === "Ikon");
-                const hasEpic = filtered.some((r) => r.pass === "Epic");
+                const ikonCount = filtered.filter((r) => r.pass === "Ikon").length;
+                const epicCount = filtered.filter((r) => r.pass === "Epic").length;
+                const hasIkon = ikonCount > 0;
+                const hasEpic = epicCount > 0;
                 sprite.material.map = makeClusterTexture(
                   filtered.length,
                   hasIkon ? IKON_COLOR : EPIC_COLOR,
                   hasIkon && hasEpic ? EPIC_COLOR : undefined,
+                  hasIkon && hasEpic ? ikonCount / (ikonCount + epicCount) : undefined,
                 );
                 sprite.material.needsUpdate = true;
               }

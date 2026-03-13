@@ -176,36 +176,6 @@ export default function ResortDrawer({
                 />
               </svg>
             </button>
-            <div className="w-px h-4 bg-white/10 mx-1" />
-            <button
-              onClick={() => setFullscreen((v) => !v)}
-              className="text-white/40 hover:text-white transition-colors mt-1"
-              title={fullscreen ? "Exit fullscreen" : "Fullscreen"}
-            >
-              {fullscreen ? (
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <path d="M6 2H2v4M10 2h4v4M6 14H2v-4M10 14h4v-4" />
-                </svg>
-              ) : (
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <path d="M2 6V2h4M10 2h4v4M2 10v4h4M14 10v4h-4" />
-                </svg>
-              )}
-            </button>
             <button
               onClick={onClose}
               className="text-white/40 hover:text-white text-3xl leading-none mt-1"
@@ -221,6 +191,7 @@ export default function ResortDrawer({
             {/* Map — takes remaining width */}
             <div className="flex-1 min-w-0 relative">
               {resort && <ResortMap key="fs" resort={resort} />}
+              <FullscreenButton fullscreen={fullscreen} onClick={() => setFullscreen(v => !v)} />
               <div
                 className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 px-4 py-2 rounded-full border border-white/10 pointer-events-none select-none"
                 style={{
@@ -333,6 +304,7 @@ export default function ResortDrawer({
           <div className="flex-1 min-h-0 flex flex-col">
             <div className="flex-1 min-h-80 relative">
               {resort && <ResortMap key="normal" resort={resort} />}
+              <FullscreenButton fullscreen={fullscreen} onClick={() => setFullscreen(v => !v)} />
               <div
                 className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 px-4 py-2 rounded-full border border-white/10 pointer-events-none select-none"
                 style={{
@@ -505,6 +477,27 @@ function StatBar({
         />
       </div>
     </div>
+  );
+}
+
+function FullscreenButton({ fullscreen, onClick }: { fullscreen: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      title={fullscreen ? "Exit fullscreen" : "Fullscreen"}
+      className="absolute top-3 left-3 z-10 flex items-center justify-center w-8 h-8 rounded-lg text-white/50 hover:text-white transition-colors border border-white/10 hover:border-white/25"
+      style={{ background: "rgba(4, 14, 28, 0.75)", backdropFilter: "blur(8px)" }}
+    >
+      {fullscreen ? (
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M6 2H2v4M10 2h4v4M6 14H2v-4M10 14h4v-4" />
+        </svg>
+      ) : (
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M2 6V2h4M10 2h4v4M2 10v4h4M14 10v4h-4" />
+        </svg>
+      )}
+    </button>
   );
 }
 

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export function makeClusterTexture(count: number, hex: number, hex2?: number): THREE.CanvasTexture {
+export function makeClusterTexture(count: number, hex: number, hex2?: number, fraction = 0.5): THREE.CanvasTexture {
   // Extra padding so the drop shadow isn't clipped
   const SIZE = 80;
   const CX = SIZE / 2;
@@ -11,6 +11,9 @@ export function makeClusterTexture(count: number, hex: number, hex2?: number): T
   const color1 = `#${hex.toString(16).padStart(6, "0")}`;
   const color2 = hex2 !== undefined ? `#${hex2.toString(16).padStart(6, "0")}` : color1;
 
+  // Angles for the proportional split (color1 takes `fraction` of the circle)
+  const splitAngle = -Math.PI / 2 + fraction * Math.PI * 2;
+
   // Drop shadow on the outer halo
   ctx.shadowColor = "rgba(0, 0, 0, 0.55)";
   ctx.shadowBlur = 10;
@@ -19,16 +22,16 @@ export function makeClusterTexture(count: number, hex: number, hex2?: number): T
 
   if (hex2 !== undefined) {
     ctx.beginPath();
-    ctx.arc(CX, CX, 30, -Math.PI / 2, Math.PI / 2);
-    ctx.lineTo(CX, CX);
-    ctx.closePath();
-    ctx.fillStyle = `${color2}44`;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(CX, CX, 30, Math.PI / 2, -Math.PI / 2);
+    ctx.arc(CX, CX, 30, -Math.PI / 2, splitAngle);
     ctx.lineTo(CX, CX);
     ctx.closePath();
     ctx.fillStyle = `${color1}44`;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(CX, CX, 30, splitAngle, -Math.PI / 2);
+    ctx.lineTo(CX, CX);
+    ctx.closePath();
+    ctx.fillStyle = `${color2}44`;
     ctx.fill();
   } else {
     ctx.beginPath();
@@ -44,16 +47,16 @@ export function makeClusterTexture(count: number, hex: number, hex2?: number): T
 
   if (hex2 !== undefined) {
     ctx.beginPath();
-    ctx.arc(CX, CX, 22, -Math.PI / 2, Math.PI / 2);
-    ctx.lineTo(CX, CX);
-    ctx.closePath();
-    ctx.fillStyle = color2;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(CX, CX, 22, Math.PI / 2, -Math.PI / 2);
+    ctx.arc(CX, CX, 22, -Math.PI / 2, splitAngle);
     ctx.lineTo(CX, CX);
     ctx.closePath();
     ctx.fillStyle = color1;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(CX, CX, 22, splitAngle, -Math.PI / 2);
+    ctx.lineTo(CX, CX);
+    ctx.closePath();
+    ctx.fillStyle = color2;
     ctx.fill();
   } else {
     ctx.beginPath();
