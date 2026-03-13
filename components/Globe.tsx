@@ -21,6 +21,7 @@ interface GlobeProps {
   resorts: Resort[];
   onResortClick: (resort: Resort, pos: ScreenPos) => void;
   onClusterClick: (resorts: Resort[], pos: ScreenPos) => void;
+  onIntroComplete?: () => void;
 }
 
 const IKON_COLOR = 0x072141;
@@ -52,18 +53,32 @@ export default function Globe({
   resorts,
   onResortClick,
   onClusterClick,
+  onIntroComplete,
 }: GlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
-  const { activePasses, activePassTypes, minVertical, minRuns, minLifts } = useFilter();
+  const { activePasses, activePassTypes, minVertical, minRuns, minLifts } =
+    useFilter();
   const spritesRef = useRef<THREE.Sprite[]>([]);
-  const spritePassTypesRef = useRef<(string | undefined)[]>([]);
-  const applyFilterRef = useRef<((passes: Set<string>, passTypes: Set<string>, minVert: number, minRunsVal: number, minLiftsVal: number) => void) | null>(null);
+  const applyFilterRef = useRef<
+    | ((
+        passes: Set<string>,
+        passTypes: Set<string>,
+        minVert: number,
+        minRunsVal: number,
+        minLiftsVal: number,
+      ) => void)
+    | null
+  >(null);
   const isDragging = useRef(false);
   const hasDragged = useRef(false);
   const previousMouse = useRef({ x: 0, y: 0 });
   const rotation = useRef({ x: 0, y: 0 });
   const cleanupRef = useRef<() => void>(() => {});
+  const onIntroCompleteRef = useRef(onIntroComplete);
+  useEffect(() => {
+    onIntroCompleteRef.current = onIntroComplete;
+  }, [onIntroComplete]);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -137,7 +152,14 @@ export default function Globe({
       load("/Epic.png"),
       load("/Ikon.png"),
     ]).then(
-      ([colorMap, specularMap, cloudMap, milkyWayMap, epicTexRaw, ikonTexRaw]) => {
+      ([
+        colorMap,
+        specularMap,
+        cloudMap,
+        milkyWayMap,
+        epicTexRaw,
+        ikonTexRaw,
+      ]) => {
         const epicTex = makePinTexture(epicTexRaw.image as HTMLImageElement);
         const ikonTex = makePinTexture(ikonTexRaw.image as HTMLImageElement);
         if (cancelled) return;
@@ -189,6 +211,36 @@ export default function Globe({
               blending: THREE.AdditiveBlending,
             }),
           ),
+        );
+
+        // Atmospheric glow — BackSide so the outer edge naturally fades to zero
+        const atmMat = new THREE.ShaderMaterial({
+          vertexShader: `
+            varying vec3 vNormal;
+            varying vec3 vViewDir;
+            void main() {
+              vNormal = normalize(-(normalMatrix * normal));
+              vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+              vViewDir = normalize(-mvPos.xyz);
+              gl_Position = projectionMatrix * mvPos;
+            }
+          `,
+          fragmentShader: `
+            varying vec3 vNormal;
+            varying vec3 vViewDir;
+            void main() {
+              float rim = dot(normalize(vNormal), normalize(vViewDir));
+              float intensity = pow(max(rim, 0.0), 3.0) * 0.85;
+              gl_FragColor = vec4(1.0, 0.85, 0.4, intensity);
+            }
+          `,
+          side: THREE.BackSide,
+          blending: THREE.AdditiveBlending,
+          transparent: true,
+          depthWrite: false,
+        });
+        scene.add(
+          new THREE.Mesh(new THREE.SphereGeometry(R * 1.15, 64, 64), atmMat),
         );
 
         // --- Sprite sets (all / ikon-only / epic-only) ---
@@ -261,6 +313,7 @@ export default function Globe({
         let activeSprites = allSet.sprites;
         let activePositions = allSet.localPositions;
         let activePayloads = allSet.payloads;
+        let filteredPayloads: (Resort[] | Resort)[] = [...allSet.payloads];
         spritesRef.current = activeSprites;
 
         const setsByKey: Record<string, SpriteSet> = {
@@ -291,7 +344,8 @@ export default function Globe({
           }
 
           const allPassTypes = passTypes.size >= 2;
-          const noRangeFilter = minVert === 0 && minRunsVal === 0 && minLiftsVal === 0;
+          const noRangeFilter =
+            minVert === 0 && minRunsVal === 0 && minLiftsVal === 0;
 
           function passesFilter(r: Resort): boolean {
             if (!allPassTypes && r.passType) {
@@ -305,10 +359,12 @@ export default function Globe({
             );
           }
 
+          filteredPayloads = [];
           setsByKey[key]!.sprites.forEach((sprite, i) => {
             const payload = setsByKey[key]!.payloads[i]!;
             if (Array.isArray(payload)) {
               const filtered = payload.filter(passesFilter);
+              filteredPayloads.push(filtered);
               sprite.visible = filtered.length > 0;
               if (sprite.visible) {
                 const hasIkon = filtered.some((r) => r.pass === "Ikon");
@@ -321,6 +377,7 @@ export default function Globe({
                 sprite.material.needsUpdate = true;
               }
             } else {
+              filteredPayloads.push(payload);
               sprite.visible = passesFilter(payload);
             }
           });
@@ -348,7 +405,9 @@ export default function Globe({
           );
           const raycaster = new THREE.Raycaster();
           raycaster.setFromCamera(mouse, camera);
-          const hits = raycaster.intersectObjects(activeSprites.filter(s => s.visible));
+          const hits = raycaster.intersectObjects(
+            activeSprites.filter((s) => s.visible),
+          );
           return hits.length > 0 ? (hits[0]!.object as THREE.Sprite) : null;
         }
 
@@ -416,7 +475,9 @@ export default function Globe({
           glowSprite.visible = true;
 
           if (Array.isArray(payload)) {
-            onClusterClick(payload, screenPos);
+            const visibleResorts =
+              (filteredPayloads[idx] as Resort[]) ?? payload;
+            onClusterClick(visibleResorts, screenPos);
           } else {
             onResortClick(payload, screenPos);
           }
@@ -438,6 +499,7 @@ export default function Globe({
         rotation.current.y = INTRO.END_ROT_Y;
         rotation.current.x = INTRO.END_ROT_X;
         let introComplete = false;
+        let legendTriggered = false;
 
         // --- Render loop ---
         renderer.domElement.addEventListener("mousedown", handleMouseDown);
@@ -485,11 +547,24 @@ export default function Globe({
               INTRO.START_ROT_Y + (INTRO.END_ROT_Y - INTRO.START_ROT_Y) * e;
             globeGroup.rotation.x = INTRO.END_ROT_X * e;
 
+            // Trigger legend slide-in 700ms before animation ends
+            if (!legendTriggered && t >= 0.75) {
+              legendTriggered = true;
+              onIntroCompleteRef.current?.();
+            }
+
             if (t >= 1) {
               introComplete = true;
               camera.position.x = 0;
               camera.position.y = 0;
-              camera.setViewOffset(width + globeOffset, height, globeOffset, 0, width, height);
+              camera.setViewOffset(
+                width + globeOffset,
+                height,
+                globeOffset,
+                0,
+                width,
+                height,
+              );
               renderer.domElement.style.cursor = "grab";
             }
           }
@@ -529,9 +604,14 @@ export default function Globe({
   }, [resorts]);
 
   useEffect(() => {
-    applyFilterRef.current?.(activePasses, activePassTypes, minVertical, minRuns, minLifts);
+    applyFilterRef.current?.(
+      activePasses,
+      activePassTypes,
+      minVertical,
+      minRuns,
+      minLifts,
+    );
   }, [activePasses, activePassTypes, minVertical, minRuns, minLifts]);
-
 
   return (
     <div className="w-full h-full relative">

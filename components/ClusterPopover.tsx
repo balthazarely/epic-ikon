@@ -44,6 +44,7 @@ export default function ClusterPopover({
         top: pos.y + 16,
         background: "rgba(6, 20, 40, 0.92)",
         backdropFilter: "blur(12px)",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 0 40px rgba(20, 80, 160, 0.18)",
       }}
       onMouseDown={e => e.stopPropagation()}
       onMouseUp={e => e.stopPropagation()}
@@ -81,7 +82,7 @@ export default function ClusterPopover({
             >
               <div>
                 <p className="text-white text-xs font-medium leading-tight">{resort.name}</p>
-                <p className="text-white/40 text-xs">{resort.country}</p>
+                <p className="text-white/40 text-xs">{[resort.region, resort.country].filter(Boolean).join(", ")}</p>
               </div>
               <span
                 className="text-xs shrink-0 ml-2 px-1.5 py-0.5 rounded-full"

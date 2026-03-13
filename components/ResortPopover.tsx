@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import type { Resort } from "@/lib/types/resort";
 import type { ScreenPos } from "./Globe";
+import { formatElevation } from "@/lib/utils/units";
 
 interface ResortPopoverProps {
   resort: Resort;
@@ -49,9 +50,11 @@ export default function ResortPopover({
         top: pos.y + OFFSET,
         background: "rgba(6, 20, 40, 0.92)",
         backdropFilter: "blur(12px)",
+        boxShadow:
+          "0 8px 32px rgba(0,0,0,0.6), 0 0 40px rgba(20, 80, 160, 0.18)",
       }}
-      onMouseDown={e => e.stopPropagation()}
-      onMouseUp={e => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
+      onMouseUp={(e) => e.stopPropagation()}
     >
       {/* Header */}
       <div className="flex items-start justify-between px-4 pt-4 pb-2">
@@ -77,7 +80,9 @@ export default function ResortPopover({
               />
             )}
           </div>
-          <p className="text-white/50 text-xs mt-0.5">{resort.country}</p>
+          <p className="text-white/50 text-xs mt-0.5">
+            {[resort.region, resort.country].filter(Boolean).join(", ")}
+          </p>
         </div>
         <button
           onClick={onClose}
@@ -89,7 +94,7 @@ export default function ResortPopover({
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-px bg-white/5 border-t border-white/10">
-        <Stat label="Vertical" value={`${resort.verticalDrop}m`} />
+        <Stat label="Vertical" value={formatElevation(resort.verticalDrop)} />
         <Stat label="Runs" value={resort.totalRuns} />
         <Stat label="Lifts" value={resort.lifts} />
       </div>
@@ -103,7 +108,7 @@ export default function ResortPopover({
           }}
           className="w-full text-xs font-semibold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-lg py-2 transition-colors"
         >
-          View Map
+          View Details & Map
         </button>
       </div>
     </div>

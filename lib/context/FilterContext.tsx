@@ -17,6 +17,8 @@ interface FilterContextValue {
   setMinRuns: (v: number) => void;
   minLifts: number;
   setMinLifts: (v: number) => void;
+  resetAll: () => void;
+  isFiltered: boolean;
 }
 
 const FilterContext = createContext<FilterContextValue | null>(null);
@@ -54,6 +56,19 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
     });
   }
 
+  function resetAll() {
+    setActivePasses(new Set(ALL_PASSES));
+    setActivePassTypes(new Set(ALL_PASS_TYPES));
+    setMinVertical(0);
+    setMinRuns(0);
+    setMinLifts(0);
+  }
+
+  const isFiltered =
+    activePasses.size < ALL_PASSES.length ||
+    activePassTypes.size < ALL_PASS_TYPES.length ||
+    minVertical > 0 || minRuns > 0 || minLifts > 0;
+
   return (
     <FilterContext.Provider
       value={{
@@ -62,6 +77,7 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
         minVertical, setMinVertical,
         minRuns, setMinRuns,
         minLifts, setMinLifts,
+        resetAll, isFiltered,
       }}
     >
       {children}
