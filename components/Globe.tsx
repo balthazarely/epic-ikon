@@ -22,6 +22,7 @@ interface GlobeProps {
   onResortClick: (resort: Resort, pos: ScreenPos) => void;
   onClusterClick: (resorts: Resort[], pos: ScreenPos) => void;
   onIntroComplete?: () => void;
+  onRegisterFlyTo?: (fn: (rotX: number, rotY: number) => void) => void;
 }
 
 const IKON_COLOR = 0x072141;
@@ -54,6 +55,7 @@ export default function Globe({
   onResortClick,
   onClusterClick,
   onIntroComplete,
+  onRegisterFlyTo,
 }: GlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
@@ -76,9 +78,9 @@ export default function Globe({
   const rotation = useRef({ x: 0, y: 0 });
   const cleanupRef = useRef<() => void>(() => {});
   const onIntroCompleteRef = useRef(onIntroComplete);
-  useEffect(() => {
-    onIntroCompleteRef.current = onIntroComplete;
-  }, [onIntroComplete]);
+  useEffect(() => { onIntroCompleteRef.current = onIntroComplete; }, [onIntroComplete]);
+  const onRegisterFlyToRef = useRef(onRegisterFlyTo);
+  useEffect(() => { onRegisterFlyToRef.current = onRegisterFlyTo; }, [onRegisterFlyTo]);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -507,6 +509,20 @@ export default function Globe({
         rotation.current.x = INTRO.END_ROT_X;
         let introComplete = false;
         let legendTriggered = false;
+        type FlyAnim = { startX: number; startY: number; endX: number; endY: number; startZ: number; endZ: number; startTime: number };
+        let flyAnim: FlyAnim | null = null;
+
+        onRegisterFlyToRef.current?.((rotX, rotY) => {
+          flyAnim = {
+            startX: rotation.current.x,
+            startY: rotation.current.y,
+            endX: rotX,
+            endY: rotY,
+            startZ: camera.position.z,
+            endZ: R * INTRO.END_Z_FACTOR,
+            startTime: performance.now(),
+          };
+        });
 
         // --- Render loop ---
         renderer.domElement.addEventListener("mousedown", handleMouseDown);
@@ -577,6 +593,18 @@ export default function Globe({
               );
               renderer.domElement.style.cursor = "grab";
             }
+          }
+
+          if (introComplete && flyAnim) {
+            const FLY_DURATION = 1200;
+            const ft = Math.min((performance.now() - flyAnim.startTime) / FLY_DURATION, 1);
+            const fe = -(Math.cos(Math.PI * ft) - 1) / 2;
+            rotation.current.x = flyAnim.startX + (flyAnim.endX - flyAnim.startX) * fe;
+            rotation.current.y = flyAnim.startY + (flyAnim.endY - flyAnim.startY) * fe;
+            camera.position.z = flyAnim.startZ + (flyAnim.endZ - flyAnim.startZ) * fe;
+            globeGroup.rotation.x = rotation.current.x;
+            globeGroup.rotation.y = rotation.current.y;
+            if (ft >= 1) flyAnim = null;
           }
 
           globeGroup.updateMatrixWorld();

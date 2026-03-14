@@ -8,10 +8,7 @@ const liftsRaw = JSON.parse(
 );
 
 const myResorts = JSON.parse(
-  fs.readFileSync(
-    path.join(process.cwd(), "public/resorts-epic-ikon.json"),
-    "utf-8",
-  ),
+  fs.readFileSync(path.join(process.cwd(), "public/resorts-aus.json"), "utf-8"),
 );
 
 const output = myResorts.map((resort) => {
@@ -38,6 +35,9 @@ const output = myResorts.map((resort) => {
   };
 });
 
-const outputPath = path.join(process.cwd(), "data/resort-lifts.json");
+const outputPath = path.join(
+  process.cwd(),
+  "data/austtrlaia-resort-lifts.json",
+);
 fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
 console.log(`Written ${output.length} resorts to resort-lifts.json`);

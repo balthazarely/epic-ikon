@@ -37,6 +37,7 @@ export default function ResortMap({ resort }: { resort: Resort }) {
   const [camera, setCamera] = useState<CameraState | null>(null);
   const [copied, setCopied] = useState(false);
   const [ready, setReady] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   const updateCamera = useCallback(() => {
     const map = mapInstanceRef.current;
@@ -52,7 +53,7 @@ export default function ResortMap({ resort }: { resort: Resort }) {
 
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !trails || trails.length === 0) return;
+    if (!map || !mapLoaded || !trails || trails.length === 0) return;
 
     const geojson: GeoJSON.FeatureCollection = {
       type: "FeatureCollection",
@@ -107,9 +108,8 @@ export default function ResortMap({ resort }: { resort: Resort }) {
       });
     }
 
-    if (map.isStyleLoaded()) addLayers();
-    else map.once("load", addLayers);
-  }, [trails]);
+    addLayers();
+  }, [trails, mapLoaded]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -123,6 +123,7 @@ export default function ResortMap({ resort }: { resort: Resort }) {
       pitch: cam ? cam.pitch : 60,
       bearing: cam ? cam.bearing : -20,
       antialias: true,
+      attributionControl: false,
     });
 
     mapInstanceRef.current = map;
@@ -131,6 +132,7 @@ export default function ResortMap({ resort }: { resort: Resort }) {
     map.on("load", updateCamera);
 
     map.on("load", () => {
+      setMapLoaded(true);
       map.addSource("mapbox-dem", {
         type: "raster-dem",
         url: "mapbox://mapbox.mapbox-terrain-dem-v1",
@@ -184,12 +186,13 @@ export default function ResortMap({ resort }: { resort: Resort }) {
       map.remove();
       mapInstanceRef.current = null;
       setReady(false);
+      setMapLoaded(false);
     };
   }, [resort.lng, resort.lat, updateCamera]);
 
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !lifts || lifts.length === 0) return;
+    if (!map || !mapLoaded || !lifts || lifts.length === 0) return;
 
     const geojson: GeoJSON.FeatureCollection = {
       type: "FeatureCollection",
@@ -250,9 +253,8 @@ export default function ResortMap({ resort }: { resort: Resort }) {
       });
     }
 
-    if (map.isStyleLoaded()) addLayers();
-    else map.once("load", addLayers);
-  }, [lifts]);
+    addLayers();
+  }, [lifts, mapLoaded]);
 
   function resetView() {
     const c = resort.mapboxCamera;

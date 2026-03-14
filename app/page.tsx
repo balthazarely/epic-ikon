@@ -3,18 +3,24 @@
 import Globe from "@/components/Globe";
 import HelpModal from "@/components/HelpModal";
 import Legend from "@/components/Legend";
+import RegionFilter from "@/components/RegionFilter";
+import type { Region } from "@/components/RegionFilter";
 import ResortDrawer from "@/components/ResortDrawer";
 import ResortPopover from "@/components/ResortPopover";
 import ClusterPopover from "@/components/ClusterPopover";
 import { useResorts } from "@/lib/hooks/useResports";
 import { Resort } from "@/lib/types/resort";
 import type { ScreenPos } from "@/components/Globe";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function Home() {
   const { data: resorts, isLoading } = useResorts();
   const [introComplete, setIntroComplete] = useState(false);
   const [modalResort, setModalResort] = useState<Resort | null>(null);
+  const [activeRegion, setActiveRegion] = useState<string | null>(
+    "north-america",
+  );
+  const flyToRef = useRef<((rotX: number, rotY: number) => void) | null>(null);
   const [popover, setPopover] = useState<{
     resort: Resort;
     pos: ScreenPos;
@@ -73,12 +79,14 @@ export default function Home() {
             alt="Ikon vs Epic"
             className="w-full h-auto block p-4"
           />
-          <p className="text-white/40 text-xs text-center pb-3 -mt-2 tracking-widest uppercase">
+          {/* <p className="text-white/40 text-xs text-center pb-3 -mt-2 tracking-widest uppercase">
             North America Edition
-          </p>
+          </p> */}
         </div>
 
-        <div className={`transition-all duration-700 ease-out delay-300 ${introComplete ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8 pointer-events-none"}`}>
+        <div
+          className={`transition-all duration-700 ease-out delay-300 ${introComplete ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8 pointer-events-none"}`}
+        >
           <Legend resorts={resorts ?? []} visible={introComplete} />
         </div>
       </div>
@@ -88,6 +96,17 @@ export default function Home() {
         onResortClick={(resort, pos) => setPopover({ resort, pos })}
         onClusterClick={(resorts, pos) => setCluster({ resorts, pos })}
         onIntroComplete={() => setIntroComplete(true)}
+        onRegisterFlyTo={(fn) => {
+          flyToRef.current = fn;
+        }}
+      />
+      <RegionFilter
+        visible={introComplete}
+        activeRegion={activeRegion}
+        onSelect={(region: Region) => {
+          setActiveRegion(region.id);
+          flyToRef.current?.(region.rotX, region.rotY);
+        }}
       />
 
       {popover && (

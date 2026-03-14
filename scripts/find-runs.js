@@ -6,10 +6,7 @@ const { pick } = require("stream-json/filters/Pick");
 const { streamArray } = require("stream-json/streamers/StreamArray");
 
 const myResorts = JSON.parse(
-  fs.readFileSync(
-    path.join(process.cwd(), "public/resorts-epic-ikon.json"),
-    "utf-8",
-  ),
+  fs.readFileSync(path.join(process.cwd(), "public/resorts-aus.json"), "utf-8"),
 );
 
 const resortIds = new Set(myResorts.map((r) => r.id));
@@ -47,10 +44,13 @@ pipeline.on("end", () => {
     runs: runsByResort[resort.id],
   }));
 
-  const outputPath = path.join(process.cwd(), "data/resort-runs.json");
+  const outputPath = path.join(
+    process.cwd(),
+    "data/australia-resort-runs.json",
+  );
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
-  console.log(`Done — written to data/resort-runs.json`);
+  console.log(`Done — written to data/australia-resort-runs.json`);
 });
 
 pipeline.on("error", (err) => console.error(err));

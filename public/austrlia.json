@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Falls Creek",
+    "id": "2ea01c73118f9c02add82629743aade1a80abcce",
+    "pass": "Epic",
+    "passType": "limited"
+  },
+  {
+    "name": "Hotham",
+    "id": "9d2505d392154c2677a0bb9cb0c5341af7da35fc",
+    "pass": "Epic",
+    "passType": "limited"
+  },
+  {
+    "name": "Perisher",
+    "id": "3885048f9cb77cae837d23131d2f8fb78d06f807",
+    "pass": "Epic",
+    "passType": "limited"
+  },
+  {
+    "name": "Mt Buller",
+    "id": "3b25b4087e1b1573decc1cb186168da4743b7e68",
+    "pass": "Ikon",
+    "passType": "limited"
+  },
+  {
+    "name": "Thredbo",
+    "id": "890292ea837546e59f76bc5ebe6215c87576f8cf",
+    "pass": "Ikon",
+    "passType": "limited"
+  }
+]
