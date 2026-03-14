@@ -76,22 +76,22 @@ export default function ResortDrawer({
 
       {/* Drawer */}
       <div
-        className={`fixed z-50 flex flex-col overflow-y-auto shadow-2xl transition-all duration-300 ease-in-out ${fullscreen ? "inset-0" : `top-0 right-0 h-full w-full max-w-2xl ${resort ? "translate-x-0" : "translate-x-full"}`}`}
+        className={`fixed z-50 flex flex-col shadow-2xl transition-all duration-300 ease-in-out ${fullscreen ? "inset-0" : `top-0 right-0 h-full w-full max-w-2xl ${resort ? "translate-x-0" : "translate-x-full"}`}`}
         style={{
           background: "rgba(6, 20, 40, 0.88)",
           backdropFilter: "blur(16px)",
         }}
       >
-        {/* Header */}
-        <div className="flex items-start justify-between px-6 pt-6 pb-5 border-b border-white/10 shrink-0">
-          <div>
+        {/* Header — always fixed */}
+        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/10 shrink-0">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
-              <h2 className="text-white text-2xl font-bold">{resort?.name}</h2>
+              <h2 className="text-white text-xl font-bold leading-tight">{resort?.name}</h2>
               {resort?.pass && (
                 <img
                   src={resort.pass === "Epic" ? "/Epic.png" : "/Ikon.png"}
                   alt={resort.pass}
-                  className="h-6 w-auto object-contain opacity-90 rounded-sm ring-1 ring-white/25"
+                  className="h-5 w-auto object-contain opacity-90 rounded-sm ring-1 ring-white/25"
                 />
               )}
               {resort?.passType && (
@@ -103,31 +103,9 @@ export default function ResortDrawer({
                 />
               )}
             </div>
-            <p className="text-white/40 text-sm mt-1">
+            <p className="text-white/40 text-sm mt-0.5">
               {[resort?.region, resort?.country].filter(Boolean).join(", ")}
             </p>
-            {resort?.description && (
-              <p className="text-white/50 text-sm mt-2 leading-relaxed">
-                {resort.description}
-              </p>
-            )}
-            <div className="flex items-center gap-2 mt-2 flex-wrap">
-              {resort?.website && (
-                <a
-                  href={resort.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-medium px-2.5 py-1 rounded-full transition-colors"
-                  style={{
-                    background: "rgba(59,130,246,0.1)",
-                    color: "#93c5fd",
-                    border: "1px solid rgba(59,130,246,0.25)",
-                  }}
-                >
-                  Visit Website ↗
-                </a>
-              )}
-            </div>
           </div>
           <div className="flex items-center gap-2 ml-4 shrink-0">
             <button
@@ -135,22 +113,12 @@ export default function ResortDrawer({
                 if (hasPrev) onNavigate(resorts[currentIndex - 1]!);
               }}
               disabled={!hasPrev}
-              className="text-white/40 hover:text-white transition-colors mt-1 disabled:opacity-20 disabled:cursor-not-allowed"
+              className="flex items-center justify-center w-9 h-9 rounded-lg border border-white/10 text-white/50 hover:text-white hover:border-white/25 transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+              style={{ background: "rgba(255,255,255,0.04)" }}
               title="Previous resort"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <path
-                  d="M10 3L5 8l5 5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M10 3L5 8l5 5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
             <button
@@ -158,27 +126,17 @@ export default function ResortDrawer({
                 if (hasNext) onNavigate(resorts[currentIndex + 1]!);
               }}
               disabled={!hasNext}
-              className="text-white/40 hover:text-white transition-colors mt-1 disabled:opacity-20 disabled:cursor-not-allowed"
+              className="flex items-center justify-center w-9 h-9 rounded-lg border border-white/10 text-white/50 hover:text-white hover:border-white/25 transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+              style={{ background: "rgba(255,255,255,0.04)" }}
               title="Next resort"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <path
-                  d="M6 3l5 5-5 5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M6 3l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
             <button
               onClick={onClose}
-              className="text-white/40 hover:text-white text-3xl leading-none mt-1"
+              className="text-white/40 hover:text-white text-3xl leading-none ml-1"
             >
               ×
             </button>
@@ -303,16 +261,43 @@ export default function ResortDrawer({
             </div>
           </div>
         ) : (
-          /* ── Normal: stacked column ── */
-          <div className="flex-1 min-h-0 flex flex-col">
-            <div className="flex-1 min-h-80 relative">
+          /* ── Normal: scrollable content ── */
+          <div className="flex-1 overflow-y-auto">
+            {/* Description + website */}
+            {(resort?.description || resort?.website) && (
+              <div className="px-6 py-4 border-b border-white/10">
+                {resort?.description && (
+                  <p className="text-white/50 text-sm leading-relaxed">
+                    {resort.description}
+                  </p>
+                )}
+                {resort?.website && (
+                  <a
+                    href={resort.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block mt-3 text-xs font-medium px-2.5 py-1 rounded-full transition-colors"
+                    style={{
+                      background: "rgba(59,130,246,0.1)",
+                      color: "#93c5fd",
+                      border: "1px solid rgba(59,130,246,0.25)",
+                    }}
+                  >
+                    Visit Website ↗
+                  </a>
+                )}
+              </div>
+            )}
+
+            {/* Map — fixed height */}
+            <div className="relative h-72">
               {resort && <ResortMap key="normal" resort={resort} />}
               <FullscreenButton
                 fullscreen={fullscreen}
                 onClick={() => setFullscreen((v) => !v)}
               />
               <div
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 px-4 py-2 rounded-full border border-white/10 pointer-events-none select-none"
+                className="absolute bottom-4 left-1/2 -translate-x-1/2 hidden sm:flex items-center gap-4 px-4 py-2 rounded-full border border-white/10 pointer-events-none select-none"
                 style={{
                   background: "rgba(4, 14, 28, 0.75)",
                   backdropFilter: "blur(8px)",
@@ -325,7 +310,8 @@ export default function ResortDrawer({
                 <Hint icon="⊕" primary="Scroll" secondary="Zoom" />
               </div>
             </div>
-            <div className="shrink-0">
+
+            <div>
               <div className="grid grid-cols-3 border-b border-white/10">
                 <StatBar
                   label="Vertical Drop"
@@ -487,7 +473,7 @@ function FullscreenButton({
     <button
       onClick={onClick}
       title={fullscreen ? "Exit fullscreen" : "Fullscreen"}
-      className="absolute top-3 left-3 z-10 flex items-center justify-center w-8 h-8 rounded-lg text-white/50 hover:text-white transition-colors border border-white/10 hover:border-white/25"
+      className="absolute top-3 left-3 z-10 hidden sm:flex items-center justify-center w-8 h-8 rounded-lg text-white/50 hover:text-white transition-colors border border-white/10 hover:border-white/25"
       style={{
         background: "rgba(4, 14, 28, 0.75)",
         backdropFilter: "blur(8px)",

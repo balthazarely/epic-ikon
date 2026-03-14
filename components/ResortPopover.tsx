@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Resort } from "@/lib/types/resort";
 import type { ScreenPos } from "./Globe";
 import { formatElevation } from "@/lib/utils/units";
@@ -20,6 +20,14 @@ export default function ResortPopover({
   onBack,
 }: ResortPopoverProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // Close on outside click
   useEffect(() => {
@@ -44,10 +52,9 @@ export default function ResortPopover({
   return (
     <div
       ref={ref}
-      className="fixed z-50 w-56 rounded-xl overflow-hidden shadow-2xl border border-white/10"
+      className="fixed z-50 rounded-xl overflow-hidden shadow-2xl border border-white/10 left-4 right-4 bottom-28 sm:left-auto sm:right-auto sm:bottom-auto sm:w-56"
       style={{
-        left: pos.x + OFFSET,
-        top: pos.y + OFFSET,
+        ...(isMobile ? {} : { left: pos.x + OFFSET, top: pos.y + OFFSET }),
         background: "rgba(6, 20, 40, 0.92)",
         backdropFilter: "blur(12px)",
         boxShadow:

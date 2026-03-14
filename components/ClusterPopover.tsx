@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Resort } from "@/lib/types/resort";
 import type { ScreenPos } from "./Globe";
 
@@ -17,6 +17,14 @@ export default function ClusterPopover({
   onResortClick,
 }: ClusterPopoverProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -38,10 +46,9 @@ export default function ClusterPopover({
   return (
     <div
       ref={ref}
-      className="fixed z-50 w-64 rounded-xl overflow-hidden shadow-2xl border border-white/10"
+      className="fixed z-50 rounded-xl overflow-hidden shadow-2xl border border-white/10 left-4 right-4 bottom-28 sm:left-auto sm:right-auto sm:bottom-auto sm:w-64"
       style={{
-        left: pos.x + 16,
-        top: pos.y + 16,
+        ...(isMobile ? { maxHeight: "60dvh" } : { left: pos.x + 16, top: pos.y + 16 }),
         background: "rgba(6, 20, 40, 0.92)",
         backdropFilter: "blur(12px)",
         boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 0 40px rgba(20, 80, 160, 0.18)",
@@ -70,7 +77,7 @@ export default function ClusterPopover({
       </div>
 
       {/* Resort list */}
-      <ul className="max-h-64 overflow-y-auto">
+      <ul className="overflow-y-auto" style={{ maxHeight: isMobile ? "calc(60dvh - 72px)" : "16rem" }}>
         {resorts.map((resort) => (
           <li key={resort.id}>
             <button
