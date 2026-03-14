@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useFilter } from "@/lib/context/FilterContext";
 import type { Resort } from "@/lib/types/resort";
 import { formatElevation } from "@/lib/utils/units";
@@ -26,6 +26,8 @@ export default function Legend({ resorts, visible }: LegendProps) {
     isFiltered,
   } = useFilter();
 
+  const [collapsed, setCollapsed] = useState(false);
+
   const maxStats = useMemo(() => {
     if (resorts.length === 0) return { vertical: 2000, runs: 300, lifts: 50 };
     return {
@@ -37,12 +39,31 @@ export default function Legend({ resorts, visible }: LegendProps) {
 
   return (
     <div
-      className={`rounded-xl px-4 py-4 border border-white/10 overflow-y-auto shadow-2xl transition-all duration-700 ease-out ${visible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8 pointer-events-none"}`}
+      className={`rounded-xl border border-white/10 shadow-2xl transition-all duration-700 ease-out ${visible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8 pointer-events-none"}`}
       style={{
         background: "rgba(4, 14, 28, 0.85)",
         backdropFilter: "blur(12px)",
       }}
     >
+      {/* Header with minimize button */}
+      <div className="flex items-center justify-between px-4 pt-3 pb-2">
+        <span className="text-white/40 text-[10px] uppercase tracking-widest">Filters</span>
+        <button
+          onClick={() => setCollapsed(v => !v)}
+          className="text-white/30 hover:text-white/70 transition-colors"
+          title={collapsed ? "Expand" : "Collapse"}
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+            {collapsed
+              ? <path d="M2 4l4 4 4-4" />
+              : <path d="M2 8l4-4 4 4" />}
+          </svg>
+        </button>
+      </div>
+
+      {/* Collapsible content */}
+      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? "max-h-0" : "max-h-[600px]"}`}>
+      <div className="px-4 pb-4">
       {/* Pass */}
       <Section label="Pass" onReset={undefined}>
         <ul className="flex flex-col gap-2">
@@ -144,6 +165,8 @@ export default function Legend({ resorts, visible }: LegendProps) {
           </button>
         </>
       )}
+      </div>
+      </div>
     </div>
   );
 }

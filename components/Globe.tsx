@@ -501,6 +501,74 @@ export default function Globe({
           );
         };
 
+        // --- Touch handlers ---
+        let lastPinchDist = 0;
+
+        const handleTouchStart = (e: TouchEvent) => {
+          if (!introComplete) return;
+          e.preventDefault();
+          if (e.touches.length === 1) {
+            isDragging.current = true;
+            hasDragged.current = false;
+            previousMouse.current = { x: e.touches[0]!.clientX, y: e.touches[0]!.clientY };
+          } else if (e.touches.length === 2) {
+            const dx = e.touches[0]!.clientX - e.touches[1]!.clientX;
+            const dy = e.touches[0]!.clientY - e.touches[1]!.clientY;
+            lastPinchDist = Math.sqrt(dx * dx + dy * dy);
+          }
+        };
+
+        const handleTouchMove = (e: TouchEvent) => {
+          if (!introComplete) return;
+          e.preventDefault();
+          if (e.touches.length === 1 && isDragging.current) {
+            hasDragged.current = true;
+            const dx = e.touches[0]!.clientX - previousMouse.current.x;
+            const dy = e.touches[0]!.clientY - previousMouse.current.y;
+            const sensitivity = (camera.position.z - R) * 0.00002;
+            rotation.current.y += dx * sensitivity;
+            rotation.current.x = Math.max(
+              -Math.PI / 2,
+              Math.min(Math.PI / 2, rotation.current.x + dy * sensitivity),
+            );
+            globeGroup.rotation.y = rotation.current.y;
+            globeGroup.rotation.x = rotation.current.x;
+            previousMouse.current = { x: e.touches[0]!.clientX, y: e.touches[0]!.clientY };
+          } else if (e.touches.length === 2) {
+            const dx = e.touches[0]!.clientX - e.touches[1]!.clientX;
+            const dy = e.touches[0]!.clientY - e.touches[1]!.clientY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const delta = lastPinchDist - dist;
+            camera.position.z = Math.max(R * 1.4, Math.min(R * 6, camera.position.z + delta * 0.3));
+            lastPinchDist = dist;
+          }
+        };
+
+        const handleTouchEnd = (e: TouchEvent) => {
+          if (!introComplete) return;
+          if (e.touches.length === 0) {
+            isDragging.current = false;
+            if (hasDragged.current) return;
+            const touch = e.changedTouches[0];
+            if (!touch) return;
+            const syntheticEvent = { clientX: touch.clientX, clientY: touch.clientY } as MouseEvent;
+            const hit = getSpriteAt(syntheticEvent);
+            if (!hit) { glowSprite.visible = false; selectedLocalPos = null; return; }
+            const idx = activeSprites.indexOf(hit);
+            if (idx === -1) return;
+            const payload = activePayloads[idx]!;
+            const screenPos = projectToScreen(hit);
+            glowSprite.scale.setScalar(hit.scale.x * 2.8);
+            selectedLocalPos = activePositions[idx]!.clone();
+            glowSprite.visible = true;
+            if (Array.isArray(payload)) {
+              onClusterClick((filteredPayloads[idx] as Resort[]) ?? payload, screenPos);
+            } else {
+              onResortClick(payload, screenPos);
+            }
+          }
+        };
+
         // --- Intro animation ---
         const introStart = performance.now() + INTRO.FADE_DELAY;
         camera.position.z = R * INTRO.START_Z_FACTOR;
@@ -526,9 +594,10 @@ export default function Globe({
 
         // --- Render loop ---
         renderer.domElement.addEventListener("mousedown", handleMouseDown);
-        renderer.domElement.addEventListener("wheel", handleWheel, {
-          passive: false,
-        });
+        renderer.domElement.addEventListener("wheel", handleWheel, { passive: false });
+        renderer.domElement.addEventListener("touchstart", handleTouchStart, { passive: false });
+        renderer.domElement.addEventListener("touchmove", handleTouchMove, { passive: false });
+        renderer.domElement.addEventListener("touchend", handleTouchEnd, { passive: false });
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("mouseup", handleMouseUp);
 
@@ -626,6 +695,9 @@ export default function Globe({
           cancelAnimationFrame(animationId);
           renderer.domElement.removeEventListener("mousedown", handleMouseDown);
           renderer.domElement.removeEventListener("wheel", handleWheel);
+          renderer.domElement.removeEventListener("touchstart", handleTouchStart);
+          renderer.domElement.removeEventListener("touchmove", handleTouchMove);
+          renderer.domElement.removeEventListener("touchend", handleTouchEnd);
           window.removeEventListener("mousemove", handleMouseMove);
           window.removeEventListener("mouseup", handleMouseUp);
         };

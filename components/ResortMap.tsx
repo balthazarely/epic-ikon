@@ -108,7 +108,8 @@ export default function ResortMap({ resort }: { resort: Resort }) {
       });
     }
 
-    addLayers();
+    if (map.isStyleLoaded()) addLayers();
+    else map.once("style.load", addLayers);
   }, [trails, mapLoaded]);
 
   useEffect(() => {
@@ -132,7 +133,6 @@ export default function ResortMap({ resort }: { resort: Resort }) {
     map.on("load", updateCamera);
 
     map.on("load", () => {
-      setMapLoaded(true);
       map.addSource("mapbox-dem", {
         type: "raster-dem",
         url: "mapbox://mapbox.mapbox-terrain-dem-v1",
@@ -150,35 +150,37 @@ export default function ResortMap({ resort }: { resort: Resort }) {
           bearing: c ? c.bearing : -20,
           duration: 2000,
         });
-        return;
+      } else {
+        map.addSource("resort-bounds", {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            geometry: { type: "Polygon", coordinates: [resort.bounds] },
+            properties: {},
+          },
+        });
+        map.addLayer({
+          id: "resort-boundary",
+          type: "line",
+          source: "resort-bounds",
+          paint: {
+            "line-color": "#ffffff",
+            "line-width": 2,
+            "line-opacity": 0.9,
+          },
+        });
+        const c = resort.mapboxCamera;
+        map.flyTo({
+          center: c ? c.center : [resort.lng, resort.lat],
+          zoom: c ? c.zoom : 13,
+          pitch: c ? c.pitch : 65,
+          bearing: c ? c.bearing : -20,
+          duration: 0,
+        });
       }
 
-      map.addSource("resort-bounds", {
-        type: "geojson",
-        data: {
-          type: "Feature",
-          geometry: { type: "Polygon", coordinates: [resort.bounds] },
-          properties: {},
-        },
-      });
-      map.addLayer({
-        id: "resort-boundary",
-        type: "line",
-        source: "resort-bounds",
-        paint: {
-          "line-color": "#ffffff",
-          "line-width": 2,
-          "line-opacity": 0.9,
-        },
-      });
-      const c = resort.mapboxCamera;
-      map.flyTo({
-        center: c ? c.center : [resort.lng, resort.lat],
-        zoom: c ? c.zoom : 13,
-        pitch: c ? c.pitch : 65,
-        bearing: c ? c.bearing : -20,
-        duration: 0,
-      });
+      // Signal ready only after all setup is complete
+      setMapLoaded(true);
     });
 
     return () => {
@@ -253,7 +255,8 @@ export default function ResortMap({ resort }: { resort: Resort }) {
       });
     }
 
-    addLayers();
+    if (map.isStyleLoaded()) addLayers();
+    else map.once("style.load", addLayers);
   }, [lifts, mapLoaded]);
 
   function resetView() {

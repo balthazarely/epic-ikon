@@ -109,11 +109,11 @@ export default function HelpModal({ visible }: HelpModalProps) {
 
       {/* Modal */}
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center p-6 pointer-events-none transition-all duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+        className={`fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-6 p-0 pointer-events-none transition-all duration-300 ${open ? "opacity-100" : "opacity-0"}`}
       >
         <div
           ref={ref}
-          className={`w-full max-w-lg rounded-2xl border border-white/10 shadow-2xl transition-all duration-300 ${open ? "pointer-events-auto scale-100 translate-y-0" : "pointer-events-none scale-95 translate-y-4"}`}
+          className={`w-full max-w-lg sm:rounded-2xl rounded-t-2xl border border-white/10 shadow-2xl transition-all duration-300 flex flex-col max-h-[90dvh] ${open ? "pointer-events-auto scale-100 translate-y-0" : "pointer-events-none scale-95 translate-y-4"}`}
           style={{
             background: "rgba(6, 20, 40, 0.97)",
             backdropFilter: "blur(16px)",
@@ -139,7 +139,7 @@ export default function HelpModal({ visible }: HelpModalProps) {
           </div>
 
           {/* Content */}
-          <div className="px-6 py-5 space-y-6">
+          <div className="px-6 py-5 space-y-6 overflow-y-auto flex-1 min-h-0">
             {sections.map((section) => (
               <div key={section.heading}>
                 <p className="text-white/35 text-[10px] uppercase tracking-widest mb-3">

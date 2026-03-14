@@ -49,7 +49,7 @@ export default function RegionFilter({
 }: RegionFilterProps) {
   return (
     <div
-      className={`fixed bottom-6 left-6 z-30 flex gap-3 transition-all duration-700 ease-out ${
+      className={`fixed bottom-6 left-6 right-6 z-30 flex gap-3 overflow-x-auto transition-all duration-700 ease-out scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${
         visible
           ? "opacity-100 translate-y-0"
           : "opacity-0 translate-y-4 pointer-events-none"
@@ -61,7 +61,7 @@ export default function RegionFilter({
           <button
             key={region.id}
             onClick={() => onSelect(region)}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-200"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-200 shrink-0"
             style={{
               background: isActive
                 ? "rgba(59, 130, 246, 0.15)"
