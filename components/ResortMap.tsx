@@ -29,6 +29,118 @@ interface CameraState {
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
+// --- Module-level layer helpers ---
+// Called from both the map load handler (when data is cached) and effects (when data arrives later).
+
+function addTrailsToMap(map: mapboxgl.Map, trails: Trail[]) {
+  const geojson: GeoJSON.FeatureCollection = {
+    type: "FeatureCollection",
+    features: trails.map((trail) => ({
+      type: "Feature" as const,
+      geometry: { type: "LineString" as const, coordinates: trail.coordinates },
+      properties: { name: trail.name, difficulty: trail.difficulty, status: trail.status },
+    })),
+  };
+  if (map.getSource("trails")) {
+    (map.getSource("trails") as mapboxgl.GeoJSONSource).setData(geojson);
+    return;
+  }
+  map.addSource("trails", { type: "geojson", data: geojson });
+  map.addLayer({
+    id: "trails-casing",
+    type: "line",
+    source: "trails",
+    paint: {
+      "line-width": 3.5,
+      "line-opacity": 0.6,
+      "line-color": [
+        "match", ["get", "difficulty"],
+        "advanced", "#ffffff",
+        "hard",     "#ffffff",
+        "expert",   "#ffffff",
+        "#000000",
+      ],
+    },
+  });
+  map.addLayer({
+    id: "trails-line",
+    type: "line",
+    source: "trails",
+    paint: {
+      "line-width": 1.5,
+      "line-opacity": 0.85,
+      "line-color": [
+        "match", ["get", "difficulty"],
+        "novice",       "#4caf50",
+        "easy",         "#4caf50",
+        "intermediate", "#2196f3",
+        "advanced",     "#111111",
+        "hard",         "#111111",
+        "expert",       "#111111",
+        "freeride",     "#ff6600",
+        "#aaaaaa",
+      ],
+    },
+  });
+}
+
+function addLiftsToMap(map: mapboxgl.Map, lifts: Lift[]) {
+  const geojson: GeoJSON.FeatureCollection = {
+    type: "FeatureCollection",
+    features: lifts.map((lift) => ({
+      type: "Feature" as const,
+      geometry: { type: "LineString" as const, coordinates: lift.coordinates },
+      properties: { name: lift.name, type: lift.type, status: lift.status },
+    })),
+  };
+  if (map.getSource("lifts")) {
+    (map.getSource("lifts") as mapboxgl.GeoJSONSource).setData(geojson);
+    return;
+  }
+  map.addSource("lifts", { type: "geojson", data: geojson });
+  map.addLayer({
+    id: "lifts-casing",
+    type: "line",
+    source: "lifts",
+    paint: {
+      "line-color": "#000000",
+      "line-width": 4,
+      "line-opacity": 0.35,
+    },
+  });
+  map.addLayer({
+    id: "lifts-line",
+    type: "line",
+    source: "lifts",
+    paint: {
+      "line-color": "#ffd700",
+      "line-width": 2,
+      "line-opacity": 0.9,
+    },
+  });
+  map.addLayer({
+    id: "lifts-label",
+    type: "symbol",
+    source: "lifts",
+    layout: {
+      "symbol-placement": "line",
+      "text-field": ["get", "name"],
+      "text-size": 11,
+      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Regular"],
+      "text-anchor": "center",
+      "text-max-angle": 30,
+      "symbol-spacing": 250,
+    },
+    paint: {
+      "text-color": "#ffd700",
+      "text-halo-color": "#000000",
+      "text-halo-width": 1.5,
+    },
+  });
+}
+
+// ---
+
 export default function ResortMap({ resort }: { resort: Resort }) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
@@ -38,6 +150,13 @@ export default function ResortMap({ resort }: { resort: Resort }) {
   const [copied, setCopied] = useState(false);
   const [ready, setReady] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
+
+  // Always-current refs so the map load handler can access the latest data
+  // even when it was already cached before the map finished loading.
+  const trailsRef = useRef(trails);
+  const liftsRef = useRef(lifts);
+  trailsRef.current = trails;
+  liftsRef.current = lifts;
 
   const updateCamera = useCallback(() => {
     const map = mapInstanceRef.current;
@@ -51,67 +170,14 @@ export default function ResortMap({ resort }: { resort: Resort }) {
     });
   }, []);
 
+  // Trails effect: handles data arriving AFTER the map has loaded
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !mapLoaded || !trails || trails.length === 0) return;
-
-    const geojson: GeoJSON.FeatureCollection = {
-      type: "FeatureCollection",
-      features: trails.map((trail: Trail) => ({
-        type: "Feature" as const,
-        geometry: { type: "LineString" as const, coordinates: trail.coordinates },
-        properties: { name: trail.name, difficulty: trail.difficulty, status: trail.status },
-      })),
-    };
-
-    function addLayers() {
-      if (map!.getSource("trails")) {
-        (map!.getSource("trails") as mapboxgl.GeoJSONSource).setData(geojson);
-        return;
-      }
-      map!.addSource("trails", { type: "geojson", data: geojson });
-      map!.addLayer({
-        id: "trails-casing",
-        type: "line",
-        source: "trails",
-        paint: {
-          "line-width": 3.5,
-          "line-opacity": 0.6,
-          "line-color": [
-            "match", ["get", "difficulty"],
-            "advanced", "#ffffff",
-            "hard",     "#ffffff",
-            "expert",   "#ffffff",
-            "#000000",
-          ],
-        },
-      });
-      map!.addLayer({
-        id: "trails-line",
-        type: "line",
-        source: "trails",
-        paint: {
-          "line-width": 1.5,
-          "line-opacity": 0.85,
-          "line-color": [
-            "match", ["get", "difficulty"],
-            "novice",       "#4caf50",
-            "easy",         "#4caf50",
-            "intermediate", "#2196f3",
-            "advanced",     "#111111",
-            "hard",         "#111111",
-            "expert",       "#111111",
-            "freeride",     "#ff6600",
-            "#aaaaaa",
-          ],
-        },
-      });
-    }
-
-    if (map.isStyleLoaded()) addLayers();
-    else map.once("style.load", addLayers);
+    if (!map || !mapLoaded || !trails?.length) return;
+    addTrailsToMap(map, trails);
   }, [trails, mapLoaded]);
 
+  // Map init effect
   useEffect(() => {
     if (!mapRef.current) return;
 
@@ -179,7 +245,12 @@ export default function ResortMap({ resort }: { resort: Resort }) {
         });
       }
 
-      // Signal ready only after all setup is complete
+      // Add layers immediately if data is already available (e.g. cached from a prior visit).
+      // This handles the case where React Query returns cached data synchronously before
+      // the map fires its load event, which would cause the effects above to miss it.
+      if (trailsRef.current?.length) addTrailsToMap(map, trailsRef.current);
+      if (liftsRef.current?.length) addLiftsToMap(map, liftsRef.current);
+
       setMapLoaded(true);
     });
 
@@ -192,71 +263,11 @@ export default function ResortMap({ resort }: { resort: Resort }) {
     };
   }, [resort.lng, resort.lat, updateCamera]);
 
+  // Lifts effect: handles data arriving AFTER the map has loaded
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !mapLoaded || !lifts || lifts.length === 0) return;
-
-    const geojson: GeoJSON.FeatureCollection = {
-      type: "FeatureCollection",
-      features: lifts.map((lift: Lift) => ({
-        type: "Feature" as const,
-        geometry: {
-          type: "LineString" as const,
-          coordinates: lift.coordinates,
-        },
-        properties: { name: lift.name, type: lift.type, status: lift.status },
-      })),
-    };
-
-    function addLayers() {
-      if (map!.getSource("lifts")) {
-        (map!.getSource("lifts") as mapboxgl.GeoJSONSource).setData(geojson);
-        return;
-      }
-      map!.addSource("lifts", { type: "geojson", data: geojson });
-      map!.addLayer({
-        id: "lifts-casing",
-        type: "line",
-        source: "lifts",
-        paint: {
-          "line-color": "#000000",
-          "line-width": 4,
-          "line-opacity": 0.35,
-        },
-      });
-      map!.addLayer({
-        id: "lifts-line",
-        type: "line",
-        source: "lifts",
-        paint: {
-          "line-color": "#ffd700",
-          "line-width": 2,
-          "line-opacity": 0.9,
-        },
-      });
-      map!.addLayer({
-        id: "lifts-label",
-        type: "symbol",
-        source: "lifts",
-        layout: {
-          "symbol-placement": "line",
-          "text-field": ["get", "name"],
-          "text-size": 11,
-          "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Regular"],
-          "text-anchor": "center",
-          "text-max-angle": 30,
-          "symbol-spacing": 250,
-        },
-        paint: {
-          "text-color": "#ffd700",
-          "text-halo-color": "#000000",
-          "text-halo-width": 1.5,
-        },
-      });
-    }
-
-    if (map.isStyleLoaded()) addLayers();
-    else map.once("style.load", addLayers);
+    if (!map || !mapLoaded || !lifts?.length) return;
+    addLiftsToMap(map, lifts);
   }, [lifts, mapLoaded]);
 
   function resetView() {

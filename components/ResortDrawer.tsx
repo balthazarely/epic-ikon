@@ -297,7 +297,7 @@ export default function ResortDrawer({
                 onClick={() => setFullscreen((v) => !v)}
               />
               <div
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 hidden sm:flex items-center gap-4 px-4 py-2 rounded-full border border-white/10 pointer-events-none select-none"
+                className="absolute bottom-3 left-1/2 -translate-x-1/2 hidden sm:flex items-center gap-3 px-3 py-1.5 rounded-full border border-white/10 pointer-events-none select-none"
                 style={{
                   background: "rgba(4, 14, 28, 0.75)",
                   backdropFilter: "blur(8px)",
@@ -516,11 +516,11 @@ function Hint({
   secondary: string;
 }) {
   return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-white/40 text-xs">{icon}</span>
-      <span className="text-white/60 text-xs font-medium">{primary}</span>
-      <span className="text-white/25 text-xs">·</span>
-      <span className="text-white/35 text-xs">{secondary}</span>
+    <div className="flex items-center gap-1">
+      <span className="text-white/40 text-[10px]">{icon}</span>
+      <span className="text-white/60 text-[10px] font-medium">{primary}</span>
+      <span className="text-white/25 text-[10px]">·</span>
+      <span className="text-white/35 text-[10px]">{secondary}</span>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import Globe from "@/components/Globe";
 import HelpModal from "@/components/HelpModal";
 import Legend from "@/components/Legend";
+import MobileFilterDrawer from "@/components/MobileFilterDrawer";
 import RegionFilter from "@/components/RegionFilter";
 import type { Region } from "@/components/RegionFilter";
 import ResortDrawer from "@/components/ResortDrawer";
@@ -21,6 +22,7 @@ export default function Home() {
     "north-america",
   );
   const flyToRef = useRef<((rotX: number, rotY: number) => void) | null>(null);
+  const clearSelectionRef = useRef<(() => void) | null>(null);
   const [popover, setPopover] = useState<{
     resort: Resort;
     pos: ScreenPos;
@@ -65,7 +67,9 @@ export default function Home() {
         />
       </div>
 
-      <div className="fixed top-6 right-6 z-30 flex shadow-2xl flex-col gap-3 w-64 ">
+      <MobileFilterDrawer resorts={resorts ?? []} visible={introComplete} />
+
+      <div className="fixed top-6 right-6 z-30 hidden sm:flex shadow-2xl flex-col gap-3 w-64 ">
         {/* Ikon vs Epic image card */}
         <div
           className={`rounded-xl border border-white/10 overflow-hidden transition-all duration-700 ease-out ${introComplete ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8 pointer-events-none"}`}
@@ -96,9 +100,8 @@ export default function Home() {
         onResortClick={(resort, pos) => setPopover({ resort, pos })}
         onClusterClick={(resorts, pos) => setCluster({ resorts, pos })}
         onIntroComplete={() => setIntroComplete(true)}
-        onRegisterFlyTo={(fn) => {
-          flyToRef.current = fn;
-        }}
+        onRegisterFlyTo={(fn) => { flyToRef.current = fn; }}
+        onRegisterClearSelection={(fn) => { clearSelectionRef.current = fn; }}
       />
       <RegionFilter
         visible={introComplete}
@@ -113,7 +116,7 @@ export default function Home() {
         <ResortPopover
           resort={popover.resort}
           pos={popover.pos}
-          onClose={() => setPopover(null)}
+          onClose={() => { setPopover(null); clearSelectionRef.current?.(); }}
           onViewDetails={(resort) => setModalResort(resort)}
           onBack={
             popover.fromCluster
@@ -141,7 +144,7 @@ export default function Home() {
       <ResortDrawer
         resort={modalResort}
         resorts={resorts ?? []}
-        onClose={() => setModalResort(null)}
+        onClose={() => { setModalResort(null); clearSelectionRef.current?.(); }}
         onNavigate={(resort) => setModalResort(resort)}
       />
     </main>

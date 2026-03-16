@@ -23,6 +23,7 @@ interface GlobeProps {
   onClusterClick: (resorts: Resort[], pos: ScreenPos) => void;
   onIntroComplete?: () => void;
   onRegisterFlyTo?: (fn: (rotX: number, rotY: number) => void) => void;
+  onRegisterClearSelection?: (fn: () => void) => void;
 }
 
 const IKON_COLOR = 0x072141;
@@ -56,6 +57,7 @@ export default function Globe({
   onClusterClick,
   onIntroComplete,
   onRegisterFlyTo,
+  onRegisterClearSelection,
 }: GlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
@@ -81,6 +83,8 @@ export default function Globe({
   useEffect(() => { onIntroCompleteRef.current = onIntroComplete; }, [onIntroComplete]);
   const onRegisterFlyToRef = useRef(onRegisterFlyTo);
   useEffect(() => { onRegisterFlyToRef.current = onRegisterFlyTo; }, [onRegisterFlyTo]);
+  const onRegisterClearSelectionRef = useRef(onRegisterClearSelection);
+  useEffect(() => { onRegisterClearSelectionRef.current = onRegisterClearSelection; }, [onRegisterClearSelection]);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -203,18 +207,17 @@ export default function Globe({
         globeGroup.add(new THREE.Mesh(globeGeo, globeMat));
 
         // Cloud layer
-        globeGroup.add(
-          new THREE.Mesh(
-            new THREE.SphereGeometry(R * 1.005, 64, 64),
-            new THREE.MeshPhongMaterial({
-              map: cloudMap,
-              transparent: true,
-              opacity: 0.1,
-              depthWrite: false,
-              blending: THREE.AdditiveBlending,
-            }),
-          ),
+        const cloudMesh = new THREE.Mesh(
+          new THREE.SphereGeometry(R * 1.005, 64, 64),
+          new THREE.MeshPhongMaterial({
+            map: cloudMap,
+            transparent: true,
+            opacity: 0.1,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+          }),
         );
+        globeGroup.add(cloudMesh);
 
         // Atmospheric glow — BackSide so the outer edge naturally fades to zero
         const atmMat = new THREE.ShaderMaterial({
@@ -404,6 +407,11 @@ export default function Globe({
         glowSprite.visible = false;
         scene.add(glowSprite);
         let selectedLocalPos: THREE.Vector3 | null = null;
+
+        onRegisterClearSelectionRef.current?.(() => {
+          glowSprite.visible = false;
+          selectedLocalPos = null;
+        });
 
         // --- Mouse helpers ---
         function getSpriteAt(e: MouseEvent): THREE.Sprite | null {
@@ -687,6 +695,9 @@ export default function Globe({
               .copy(selectedLocalPos)
               .applyMatrix4(globeGroup.matrixWorld);
           }
+          cloudMesh.rotation.y += 0.00008;
+          const t = performance.now() * 0.0001;
+          (cloudMesh.material as THREE.MeshPhongMaterial).opacity = 0.18 + Math.sin(t) * 0.03;
           renderer.render(scene, camera);
         };
         animate();
